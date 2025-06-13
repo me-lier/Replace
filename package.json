@@ -1,16 +1,18 @@
 {
-  "name": "chatbot-generator",
+  "name": "chatbot-platform",
   "version": "1.0.0",
-  "description": "AI Chatbot Generator Platform",
+  "description": "Chatbot Platform with File Generation",
+  "main": "server.js",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "start": "node server.js"
   },
   "dependencies": {
-    "firebase": "^10.8.0"
+    "archiver": "^6.0.1",
+    "express": "^4.18.2",
+    "firebase": "^10.7.0",
+    "firebase-admin": "^13.4.0"
   },
-  "devDependencies": {
-    "vite": "^5.0.0"
+  "engines": {
+    "node": ">=18.0.0"
   }
-} 
+}

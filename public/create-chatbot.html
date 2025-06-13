@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Chatbot - Chatbot Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <style>
+        /* Enhanced Styles */
+        .purpose-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .purpose-card:hover {
+            transform: translateY(-5px);
+            border-color: #3b82f6;
+            box-shadow: 0 8px 15px rgba(59, 130, 246, 0.1);
+        }
+
+        .purpose-card.selected {
+            border-color: #3b82f6;
+            background: linear-gradient(145deg, #f0f7ff, #ffffff);
+            box-shadow: 0 8px 15px rgba(59, 130, 246, 0.15);
+        }
+
+        .template-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .template-card:hover {
+            transform: translateY(-5px);
+            border-color: #3b82f6;
+            box-shadow: 0 8px 15px rgba(59, 130, 246, 0.1);
+        }
+
+        .template-card.selected {
+            border-color: #3b82f6;
+            background: linear-gradient(145deg, #f0f7ff, #ffffff);
+            box-shadow: 0 8px 15px rgba(59, 130, 246, 0.15);
+        }
+
+        .preview-btn {
+            transition: all 0.2s ease;
+            opacity: 0;
+        }
+
+        .template-card:hover .preview-btn {
+            opacity: 1;
+        }
+
+        .preview-btn:hover {
+            transform: scale(1.1);
+            background-color: #f8f9fa;
+        }
+
+        .model-option {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .model-option:hover {
+            transform: translateY(-3px);
+            border-color: #3b82f6;
+            box-shadow: 0 8px 15px rgba(59, 130, 246, 0.1);
+        }
+
+        .model-option.selected {
+            border-color: #3b82f6;
+            background: linear-gradient(145deg, #f0f7ff, #ffffff);
+            box-shadow: 0 8px 15px rgba(59, 130, 246, 0.15);
+        }
+
+        .upload-area {
+            transition: all 0.3s ease;
+            border: 2px dashed #e5e7eb;
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        }
+
+        .upload-area:hover {
+            border-color: #3b82f6;
+            background: linear-gradient(145deg, #f0f7ff, #ffffff);
+        }
+
+        .upload-area.dragover {
+            border-color: #3b82f6;
+            background: linear-gradient(145deg, #f0f7ff, #ffffff);
+            transform: scale(1.02);
+        }
+
+        .btn-primary {
+            background: linear-gradient(145deg, #3b82f6, #2563eb);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-input {
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        }
+
+        .form-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-select {
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        }
+
+        .form-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .preview-modal {
+            backdrop-filter: blur(8px);
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .preview-content {
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .section-title {
+            background: linear-gradient(145deg, #1e40af, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-description {
+            color: #4b5563;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .model-logo {
+            transition: all 0.3s ease;
+            filter: grayscale(100%);
+        }
+
+        .model-option:hover .model-logo {
+            filter: grayscale(0%);
+            transform: scale(1.1);
+        }
+
+        .model-option.selected .model-logo {
+            filter: grayscale(0%);
+        }
+
+        .file-item {
+            transition: all 0.3s ease;
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .file-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .remove-file {
+            transition: all 0.2s ease;
+            opacity: 0;
+        }
+
+        .file-item:hover .remove-file {
+            opacity: 1;
+        }
+
+        .remove-file:hover {
+            transform: scale(1.1);
+            color: #ef4444;
+        }
+
+        .custom-text-area {
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        }
+
+        .custom-text-area:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .section-transition {
+            transition: all 0.5s ease;
+        }
+
+        .section-transition.fade-out {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .section-transition.fade-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <a href="dashboard.html" class="text-2xl font-bold text-indigo-600">🤖 Chat-Bot Generator</a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <a href="dashboard.html" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Purpose Section -->
+        <section id="purpose-section">
+            <h2 class="text-2xl font-bold mb-6">What's your purpose?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Personal Assistant -->
+                <div class="purpose-card p-6 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-purpose="personal-assistant">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-user text-2xl text-blue-500 mr-3"></i>
+                        <h3 class="font-semibold">Personal Assistant</h3>
+                    </div>
+                    <p class="text-sm text-gray-600">Create a chatbot that helps with daily tasks, scheduling, and personal organization.</p>
+                </div>
+
+                <!-- Customer Support -->
+                <div class="purpose-card p-6 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-purpose="customer-support">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-headset text-2xl text-blue-500 mr-3"></i>
+                        <h3 class="font-semibold">Customer Support</h3>
+                    </div>
+                    <p class="text-sm text-gray-600">Build a chatbot to handle customer inquiries and provide 24/7 support.</p>
+                </div>
+
+                <!-- Education -->
+                <div class="purpose-card p-6 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-purpose="education">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-graduation-cap text-2xl text-blue-500 mr-3"></i>
+                        <h3 class="font-semibold">Education</h3>
+                    </div>
+                    <p class="text-sm text-gray-600">Develop a chatbot for teaching, tutoring, and educational content delivery.</p>
+                </div>
+
+                <!-- E-commerce -->
+                <div class="purpose-card p-6 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-purpose="e-commerce">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-shopping-cart text-2xl text-blue-500 mr-3"></i>
+                        <h3 class="font-semibold">E-commerce</h3>
+                    </div>
+                    <p class="text-sm text-gray-600">Create a chatbot to assist with product recommendations and shopping.</p>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between mt-8">
+                <button id="backToWelcome" class="px-6 py-2 border rounded-lg hover:bg-gray-50">
+                    <i class="fas fa-arrow-left mr-2"></i>Back
+                </button>
+                <button id="nextToTemplate" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Next<i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Template Section -->
+        <section id="template-section" class="hidden">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6">Choose a Template</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Minimal Template -->
+                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="minimal">
+                        <div class="relative">
+                            <img src="templates/minimal/preview.png" alt="Minimal Template" class="w-full h-48 object-cover rounded-lg mb-4">
+                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="minimal">
+                                <i class="fas fa-eye text-gray-600"></i>
+                </button>
+                        </div>
+                        <h3 class="font-semibold mb-2">Minimal</h3>
+                        <p class="text-sm text-gray-600">A clean and simple design for focused conversations.</p>
+            </div>
+
+                    <!-- Professional Template -->
+                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="professional">
+                        <div class="relative">
+                            <img src="templates/professional/preview.png" alt="Professional Template" class="w-full h-48 object-cover rounded-lg mb-4">
+                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="professional">
+                                <i class="fas fa-eye text-gray-600"></i>
+                            </button>
+                </div>
+                        <h3 class="font-semibold mb-2">Professional</h3>
+                        <p class="text-sm text-gray-600">A polished design for business and corporate use.</p>
+            </div>
+
+                    <!-- Creative Template -->
+                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="creative">
+                        <div class="relative">
+                            <img src="templates/creative/preview.png" alt="Creative Template" class="w-full h-48 object-cover rounded-lg mb-4">
+                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="creative">
+                                <i class="fas fa-eye text-gray-600"></i>
+                            </button>
+                        </div>
+                        <h3 class="font-semibold mb-2">Creative</h3>
+                        <p class="text-sm text-gray-600">A vibrant design for engaging user interactions.</p>
+                        </div>
+
+                    <!-- Legal Template -->
+                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="legal">
+                        <div class="relative">
+                            <img src="templates/legal/preview.png" alt="Legal Template" class="w-full h-48 object-cover rounded-lg mb-4">
+                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="legal">
+                                <i class="fas fa-eye text-gray-600"></i>
+                        </button>
+                    </div>
+                        <h3 class="font-semibold mb-2">Legal</h3>
+                        <p class="text-sm text-gray-600">Professional design for legal consultations and services.</p>
+            </div>
+
+                    <!-- Tech Template -->
+                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="tech">
+                    <div class="relative">
+                            <img src="templates/tech/preview.png" alt="Tech Template" class="w-full h-48 object-cover rounded-lg mb-4">
+                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="tech">
+                                <i class="fas fa-eye text-gray-600"></i>
+                            </button>
+                        </div>
+                        <h3 class="font-semibold mb-2">Tech</h3>
+                        <p class="text-sm text-gray-600">Modern design for technology and IT support.</p>
+                    </div>
+
+                    <!-- Fitness Template -->
+                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="fitness">
+                        <div class="relative">
+                            <img src="templates/fitness/preview.png" alt="Fitness Template" class="w-full h-48 object-cover rounded-lg mb-4">
+                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="fitness">
+                                <i class="fas fa-eye text-gray-600"></i>
+                            </button>
+                        </div>
+                        <h3 class="font-semibold mb-2">Fitness</h3>
+                        <p class="text-sm text-gray-600">Energetic design for fitness and wellness coaching.</p>
+                </div>
+
+                    <!-- Food Template -->
+                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="food">
+                    <div class="relative">
+                            <img src="templates/food/preview.png" alt="Food Template" class="w-full h-48 object-cover rounded-lg mb-4">
+                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="food">
+                                <i class="fas fa-eye text-gray-600"></i>
+                            </button>
+                        </div>
+                        <h3 class="font-semibold mb-2">Food</h3>
+                        <p class="text-sm text-gray-600">Appetizing design for restaurants and food services.</p>
+                    </div>
+
+                    <!-- Real Estate Template -->
+                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="realestate">
+                        <div class="relative">
+                            <img src="templates/realestate/preview.png" alt="Real Estate Template" class="w-full h-48 object-cover rounded-lg mb-4">
+                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="realestate">
+                                <i class="fas fa-eye text-gray-600"></i>
+                            </button>
+                            </div>
+                        <h3 class="font-semibold mb-2">Real Estate</h3>
+                        <p class="text-sm text-gray-600">Elegant design for property listings and consultations.</p>
+                    </div>
+
+                    <!-- Finance Template -->
+                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="finance">
+                        <div class="relative">
+                            <img src="templates/finance/preview.png" alt="Finance Template" class="w-full h-48 object-cover rounded-lg mb-4">
+                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="finance">
+                                <i class="fas fa-eye text-gray-600"></i>
+                            </button>
+                        </div>
+                        <h3 class="font-semibold mb-2">Finance</h3>
+                        <p class="text-sm text-gray-600">Professional design for financial services and advice.</p>
+                    </div>
+
+                    <!-- Travel Template -->
+                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="travel">
+                        <div class="relative">
+                            <img src="templates/travel/preview.png" alt="Travel Template" class="w-full h-48 object-cover rounded-lg mb-4">
+                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="travel">
+                                <i class="fas fa-eye text-gray-600"></i>
+                            </button>
+                        </div>
+                        <h3 class="font-semibold mb-2">Travel</h3>
+                        <p class="text-sm text-gray-600">Adventure-ready design for travel planning and guides.</p>
+                </div>
+
+                    <!-- Education Template -->
+                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="education">
+                    <div class="relative">
+                            <img src="templates/education/preview.png" alt="Education Template" class="w-full h-48 object-cover rounded-lg mb-4">
+                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="education">
+                                <i class="fas fa-eye text-gray-600"></i>
+                            </button>
+                        </div>
+                        <h3 class="font-semibold mb-2">Education</h3>
+                        <p class="text-sm text-gray-600">Engaging design for learning and educational content.</p>
+                    </div>
+
+                    <!-- Healthcare Template -->
+                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="healthcare">
+                        <div class="relative">
+                            <img src="templates/healthcare/preview.png" alt="Healthcare Template" class="w-full h-48 object-cover rounded-lg mb-4">
+                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="healthcare">
+                                <i class="fas fa-eye text-gray-600"></i>
+                            </button>
+                            </div>
+                        <h3 class="font-semibold mb-2">Healthcare</h3>
+                        <p class="text-sm text-gray-600">Trustworthy design for medical consultations and care.</p>
+                    </div>
+
+                    <!-- E-commerce Template -->
+                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="ecommerce">
+                        <div class="relative">
+                            <img src="templates/ecommerce/preview.png" alt="E-commerce Template" class="w-full h-48 object-cover rounded-lg mb-4">
+                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="ecommerce">
+                                <i class="fas fa-eye text-gray-600"></i>
+                            </button>
+                        </div>
+                        <h3 class="font-semibold mb-2">E-commerce</h3>
+                        <p class="text-sm text-gray-600">Shopping-focused design for online retail and services.</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between mt-8">
+                    <button id="backToPurpose" class="px-6 py-2 border rounded-lg hover:bg-gray-50">
+                        <i class="fas fa-arrow-left mr-2"></i>Back
+                    </button>
+                    <button id="nextToApi" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Next<i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+            </div>
+            </div>
+        </section>
+
+            <!-- Preview Modal -->
+            <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-6 max-w-4xl w-full mx-4">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold">Template Preview</h3>
+                        <button id="closePreview" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                <div class="aspect-w-16 aspect-h-9">
+                    <iframe id="previewFrame" src="" class="w-full h-full rounded-lg"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Setup Section -->
+        <section id="api-section" class="hidden">
+            <h2 class="text-2xl font-bold mb-6">API Configuration</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- OpenAI Option -->
+                <div class="model-option p-6 border rounded-lg cursor-pointer text-center" data-form="openai-form" data-model="openai">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg" alt="OpenAI" class="model-logo mx-auto mb-4 w-16 h-16">
+                    <h3 class="font-semibold mb-2">OpenAI</h3>
+                    <p class="text-sm text-gray-600">Use OpenAI's powerful language models.</p>
+                </div>
+                <!-- Google AI Studio Option -->
+                <div class="model-option p-6 border rounded-lg cursor-pointer text-center" data-form="google-form" data-model="google-ai">
+                    <img src="https://www.gstatic.com/devrel-devsite/prod/vc3b62f8546560934181a96752763327d5aa61578e9a263a23a3521b44b62f27a/firebase/images/touchicon-180.png" alt="Google AI Studio" class="model-logo mx-auto mb-4 w-16 h-16">
+                    <h3 class="font-semibold mb-2">Google AI Studio</h3>
+                    <p class="text-sm text-gray-600">Leverage Google's advanced AI capabilities.</p>
+                </div>
+                <!-- LLAMA Option -->
+                <div class="model-option p-6 border rounded-lg cursor-pointer text-center" data-form="llama-form" data-model="llama">
+                    <img src="https://miro.medium.com/v2/resize:fit:1024/1*tM6_a-S_6e4R5eM_a-S_6e4R5eM.png" alt="LLAMA" class="model-logo mx-auto mb-4 w-16 h-16">
+                    <h3 class="font-semibold mb-2">LLAMA</h3>
+                    <p class="text-sm text-gray-600">Use Meta's open-source LLAMA model.</p>
+                </div>
+            </div>
+
+            <!-- API Forms -->
+            <div id="openai-form" class="api-form hidden bg-white p-6 rounded-lg shadow-lg mb-8">
+                <h4 class="text-lg font-semibold mb-4">OpenAI API Configuration</h4>
+                <div class="mb-4">
+                    <label for="openaiApiKey" class="block text-sm font-medium text-gray-700">API Key</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="password" id="openaiApiKey" name="openaiApiKey" class="form-input block w-full pl-3 pr-10 py-2" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <i class="fas fa-key text-gray-400"></i>
+                        </div>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-500">Get your API key from <a href="https://platform.openai.com/account/api-keys" target="_blank" class="text-blue-600 hover:underline">OpenAI Platform</a></p>
+                </div>
+                <div class="mb-4">
+                    <label for="openaiModel" class="block text-sm font-medium text-gray-700">Model</label>
+                    <select id="openaiModel" name="openaiModel" class="form-select mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                        <option value="gpt-3.5-turbo-instruct">GPT-3.5 Turbo Instruct</option>
+                        <option value="gpt-4">GPT-4</option>
+                        <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                        <option value="text-davinci-003">Text-Davinci-003 (Legacy)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="google-form" class="api-form hidden bg-white p-6 rounded-lg shadow-lg mb-8">
+                <h4 class="text-lg font-semibold mb-4">Google AI Studio API Configuration</h4>
+                <div class="mb-4">
+                    <label for="googleApiKey" class="block text-sm font-medium text-gray-700">API Key</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="password" id="googleApiKey" name="googleApiKey" class="form-input block w-full pl-3 pr-10 py-2" placeholder="AIzaSy...">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <i class="fas fa-key text-gray-400"></i>
+                        </div>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-500">Get your API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-blue-600 hover:underline">Google AI Studio</a></p>
+                </div>
+                <div class="mb-4">
+                    <label for="googleModel" class="block text-sm font-medium text-gray-700">Model</label>
+                    <select id="googleModel" name="googleModel" class="form-select mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="gemini-pro">Gemini Pro</option>
+                        <option value="gemini-pro-vision">Gemini Pro Vision</option>
+                        <option value="gemini-ultra">Gemini Ultra</option>
+                        <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                        <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                        <option value="gemini-1.5-flash-8b">Gemini 1.5 Flash 8B</option>
+                        <option value="text-bison-001">Text-Bison-001 (Legacy)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="llama-form" class="api-form hidden bg-white p-6 rounded-lg shadow-lg mb-8">
+                <h4 class="text-lg font-semibold mb-4">LLAMA API Configuration</h4>
+                <div class="mb-4">
+                    <label for="llamaApiKey" class="block text-sm font-medium text-gray-700">API Key</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="password" id="llamaApiKey" name="llamaApiKey" class="form-input block w-full pl-3 pr-10 py-2" placeholder="hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <i class="fas fa-key text-gray-400"></i>
+                        </div>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-500">Get your API key from <a href="https://huggingface.co/settings/tokens" target="_blank" class="text-blue-600 hover:underline">Hugging Face</a></p>
+                </div>
+                <div class="mb-4">
+                    <label for="llamaModel" class="block text-sm font-medium text-gray-700">Model</label>
+                    <select id="llamaModel" name="llamaModel" class="form-select mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="llama2-7b">LLAMA 2 (7B)</option>
+                        <option value="llama2-7b-chat">LLAMA 2 (7B Chat)</option>
+                        <option value="llama2-13b">LLAMA 2 (13B)</option>
+                        <option value="llama2-70b">LLAMA 2 (70B)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between mt-8">
+                <button id="backToTemplate" class="px-6 py-2 border rounded-lg hover:bg-gray-50">
+                    <i class="fas fa-arrow-left mr-2"></i>Back
+                </button>
+                <button id="nextToDocument" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Next<i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Document Collection Section -->
+        <section id="document-section" class="hidden">
+            <h2 class="text-2xl font-bold mb-6">Knowledge Base Setup</h2>
+            <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+                <div class="mb-4">
+                    <label for="document-type" class="block text-sm font-medium text-gray-700">Select Document Type</label>
+                    <select id="document-type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <option value="">-- Select --</option>
+                        <option value="pdf">PDF Document</option>
+                        <option value="txt">Text Document</option>
+                        <option value="custom">Custom Text</option>
+                    </select>
+                </div>
+
+                <div id="file-upload" class="mt-4 p-6 border-dashed border-2 rounded-lg text-center cursor-pointer hidden">
+                    <input type="file" id="file-input" class="hidden" accept=".pdf,.txt" multiple>
+                    <p class="text-gray-500 mb-2"><i class="fas fa-cloud-upload-alt text-2xl mb-2"></i><br/>Drag and drop files here, or click to browse</p>
+                    <p class="text-xs text-gray-400">Supported formats: PDF, TXT. Max file size: 10MB</p>
+                    <div id="uploaded-files" class="mt-4 space-y-2"></div>
+                </div>
+
+                <div id="custom-text" class="mt-4 hidden">
+                    <label for="custom-text-input" class="block text-sm font-medium text-gray-700">Enter Custom Text</label>
+                    <textarea id="custom-text-input" rows="10" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="Enter your custom knowledge base text here..."></textarea>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between mt-8">
+                <button id="backToApi" class="px-6 py-2 border rounded-lg hover:bg-gray-50">
+                    <i class="fas fa-arrow-left mr-2"></i>Back
+                </button>
+                <button id="createChatbot" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Create Chatbot<i class="fas fa-plus ml-2"></i>
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Get all sections and buttons
+        const purposeSection = document.getElementById('purpose-section');
+        const templateSection = document.getElementById('template-section');
+        const apiSection = document.getElementById('api-section');
+        const documentSection = document.getElementById('document-section');
+
+        const nextToTemplate = document.getElementById('nextToTemplate');
+        const nextToApi = document.getElementById('nextToApi');
+        const nextToDocument = document.getElementById('nextToDocument');
+        const createChatbot = document.getElementById('createChatbot');
+
+        const backToWelcome = document.getElementById('backToWelcome');
+        const backToPurpose = document.getElementById('backToPurpose');
+        const backToApi = document.getElementById('backToApi');
+
+        const purposeCards = document.querySelectorAll('.purpose-card');
+        const templateCards = document.querySelectorAll('.template-card');
+        const previewButtons = document.querySelectorAll('.preview-btn');
+        const previewModal = document.getElementById('previewModal');
+        const previewFrame = document.getElementById('previewFrame');
+        const closePreview = document.getElementById('closePreview');
+
+        const modelOptions = document.querySelectorAll('.model-option');
+        const apiForms = document.querySelectorAll('.api-form');
+
+        const documentType = document.getElementById('document-type');
+        const fileUpload = document.getElementById('file-upload');
+        const customText = document.getElementById('custom-text');
+        const fileInput = document.getElementById('file-input');
+        const uploadedFiles = document.getElementById('uploaded-files');
+        const customTextInput = document.getElementById('custom-text-input');
+
+        // Initially disable the Next buttons
+        nextToTemplate.disabled = true;
+        nextToTemplate.classList.add('opacity-50', 'cursor-not-allowed');
+        nextToTemplate.classList.remove('hover:bg-blue-700');
+
+        nextToApi.disabled = true;
+        nextToApi.classList.add('opacity-50', 'cursor-not-allowed');
+        nextToApi.classList.remove('hover:bg-blue-700');
+
+        nextToDocument.disabled = true;
+        nextToDocument.classList.add('opacity-50', 'cursor-not-allowed');
+        nextToDocument.classList.remove('hover:bg-blue-700');
+
+        // Initially disable the Create Chatbot button
+        createChatbot.disabled = true;
+        createChatbot.classList.add('opacity-50', 'cursor-not-allowed');
+        createChatbot.classList.remove('hover:bg-blue-700');
+
+        // Enable Create Chatbot button when document type is selected
+        documentType.addEventListener('change', function() {
+            createChatbot.disabled = !this.value;
+            if (this.value) {
+                createChatbot.classList.remove('opacity-50', 'cursor-not-allowed');
+                createChatbot.classList.add('hover:bg-blue-700');
+            } else {
+                createChatbot.classList.add('opacity-50', 'cursor-not-allowed');
+                createChatbot.classList.remove('hover:bg-blue-700');
+            }
+        });
+
+        // Purpose Card Selection
+        purposeCards.forEach(card => {
+            card.addEventListener('click', function() {
+                // Remove selection from all cards
+                purposeCards.forEach(c => {
+                    c.classList.remove('selected', 'border-blue-500', 'ring-2', 'ring-blue-500');
+                    c.classList.add('border-gray-200');
+                });
+
+                // Add selection to clicked card
+                this.classList.remove('border-gray-200');
+                this.classList.add('selected', 'border-blue-500', 'ring-2', 'ring-blue-500');
+
+                // Store the selected purpose
+                localStorage.setItem('selectedPurpose', this.getAttribute('data-purpose'));
+
+                // Enable Next button
+                nextToTemplate.disabled = false;
+                nextToTemplate.classList.remove('opacity-50', 'cursor-not-allowed');
+                nextToTemplate.classList.add('hover:bg-blue-700');
+            });
+        });
+
+        // Template Card Selection
+        templateCards.forEach(card => {
+            card.addEventListener('click', function(e) {
+                // Don't select if clicking preview button
+                if (e.target.closest('.preview-btn')) {
+                    return;
+                }
+
+                // Remove selection from all cards
+                templateCards.forEach(c => {
+                    c.classList.remove('selected', 'border-blue-500', 'ring-2', 'ring-blue-500');
+                    c.classList.add('border-gray-200');
+                });
+
+                // Add selection to clicked card
+                this.classList.remove('border-gray-200');
+                this.classList.add('selected', 'border-blue-500', 'ring-2', 'ring-blue-500');
+
+                // Store the selected template
+                localStorage.setItem('selectedTemplate', this.getAttribute('data-template'));
+
+                // Enable Next button
+                nextToApi.disabled = false;
+                nextToApi.classList.remove('opacity-50', 'cursor-not-allowed');
+                nextToApi.classList.add('hover:bg-blue-700');
+            });
+        });
+
+        // Preview Modal Handlers
+        previewButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent card selection
+                const templatePath = this.dataset.template;
+                console.log('Loading template:', templatePath);
+                previewFrame.src = `templates/${templatePath}/index.html`;
+                previewModal.classList.remove('hidden');
+                previewModal.classList.add('flex');
+            });
+        });
+
+        closePreview.addEventListener('click', function() {
+            previewModal.classList.add('hidden');
+            previewModal.classList.remove('flex');
+            previewFrame.src = '';
+        });
+
+        // Navigation Handlers
+        nextToTemplate.addEventListener('click', function() {
+            const selectedPurpose = document.querySelector('.purpose-card.selected');
+            if (!selectedPurpose) {
+                alert('Please select a purpose first');
+                return;
+            }
+
+            // Hide purpose section with fade out
+            purposeSection.style.opacity = '0';
+            purposeSection.style.transition = 'opacity 0.3s ease-out';
+            
+            setTimeout(() => {
+            purposeSection.classList.add('hidden');
+                purposeSection.style.opacity = '1'; // Reset opacity for when we come back
+                
+                // Show template section with fade in
+            templateSection.classList.remove('hidden');
+                templateSection.style.opacity = '0';
+                templateSection.style.transition = 'opacity 0.3s ease-in';
+                
+                // Force a reflow
+                templateSection.offsetHeight;
+                
+                setTimeout(() => {
+                    templateSection.style.opacity = '1';
+                }, 50);
+                
+                // Scroll to top
+                window.scrollTo(0, 0);
+            }, 300);
+        });
+
+        nextToApi.addEventListener('click', function() {
+            const selectedTemplate = document.querySelector('.template-card.selected');
+            if (!selectedTemplate) {
+                alert('Please select a template first');
+                return;
+            }
+
+            // Hide template section with fade out
+            templateSection.style.opacity = '0';
+            templateSection.style.transition = 'opacity 0.3s ease-out';
+            
+            setTimeout(() => {
+                templateSection.classList.add('hidden');
+                templateSection.style.opacity = '1'; // Reset opacity for when we come back
+                
+                // Show API section with fade in
+                apiSection.classList.remove('hidden');
+                apiSection.style.opacity = '0';
+                apiSection.style.transition = 'opacity 0.3s ease-in';
+                
+                // Force a reflow
+                apiSection.offsetHeight;
+                
+                setTimeout(() => {
+                    apiSection.style.opacity = '1';
+                }, 50);
+                
+                // Scroll to top
+                window.scrollTo(0, 0);
+            }, 300);
+        });
+
+        backToPurpose.addEventListener('click', function() {
+            // Hide template section with fade out
+            templateSection.style.opacity = '0';
+            templateSection.style.transition = 'opacity 0.3s ease-out';
+            
+            setTimeout(() => {
+            templateSection.classList.add('hidden');
+                templateSection.style.opacity = '1'; // Reset opacity for when we come back
+                
+                // Show purpose section with fade in
+            purposeSection.classList.remove('hidden');
+                purposeSection.style.opacity = '0';
+                purposeSection.style.transition = 'opacity 0.3s ease-in';
+                
+                // Force a reflow
+                purposeSection.offsetHeight;
+                
+                setTimeout(() => {
+                    purposeSection.style.opacity = '1';
+                }, 50);
+                
+                // Scroll to top
+                window.scrollTo(0, 0);
+            }, 300);
+        });
+
+        backToWelcome.addEventListener('click', function() {
+            window.location.href = 'welcome.html';
+        });
+
+        // API Section Handlers
+        modelOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                modelOptions.forEach(opt => {
+                    opt.classList.remove('selected', 'ring-2', 'ring-blue-500', 'border-blue-500');
+                });
+                
+                this.classList.add('selected', 'ring-2', 'ring-blue-500', 'border-blue-500');
+                
+                const formId = this.dataset.form;
+                const modelType = this.dataset.model; // Get the model type (openai, google-ai, llama)
+                
+                apiForms.forEach(form => {
+                    form.classList.add('hidden');
+                });
+                document.getElementById(formId).classList.remove('hidden');
+                
+                // Store the selected model type
+                localStorage.setItem('selectedModelType', modelType);
+                
+                nextToDocument.disabled = false;
+                nextToDocument.classList.remove('opacity-50', 'cursor-not-allowed');
+                nextToDocument.classList.add('hover:bg-blue-700');
+            });
+        });
+
+        // Document Type Selection Handler
+        documentType.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                fileUpload.classList.add('hidden');
+                customText.classList.remove('hidden');
+            } else if (this.value) {
+                fileUpload.classList.remove('hidden');
+                customText.classList.add('hidden');
+            } else {
+                fileUpload.classList.add('hidden');
+                customText.classList.add('hidden');
+            }
+        });
+
+        // File Upload Handlers
+        const dropZone = document.querySelector('.border-dashed');
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                addFileToList(file);
+                this.value = ''; // Clear the input
+            }
+        });
+
+        // Drag and Drop Handlers
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            dropZone.classList.add('border-blue-500');
+        }
+
+        function unhighlight(e) {
+            dropZone.classList.remove('border-blue-500');
+        }
+
+        dropZone.addEventListener('drop', function(e) {
+            const dt = e.dataTransfer;
+            const file = dt.files[0];
+            if (file) {
+                addFileToList(file);
+            }
+        });
+
+        function addFileToList(file) {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'flex items-center justify-between p-2 bg-gray-50 rounded-md';
+            fileItem.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-file text-gray-400 mr-2"></i>
+                    <span class="text-sm text-gray-700">${file.name}</span>
+                </div>
+                <button class="text-red-500 hover:text-red-700" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            uploadedFiles.appendChild(fileItem);
+        }
+
+        // Navigation Handlers
+        nextToDocument.addEventListener('click', function() {
+            const selectedModel = document.querySelector('.model-option.selected');
+            if (!selectedModel) {
+                alert('Please select an AI model first');
+                return;
+            }
+
+            // Hide API section with fade out
+            apiSection.style.opacity = '0';
+            apiSection.style.transition = 'opacity 0.3s ease-out';
+            
+            setTimeout(() => {
+            apiSection.classList.add('hidden');
+                apiSection.style.opacity = '1'; // Reset opacity for when we come back
+                
+                // Show document section with fade in
+                documentSection.classList.remove('hidden');
+                documentSection.style.opacity = '0';
+                documentSection.style.transition = 'opacity 0.3s ease-in';
+                
+                // Force a reflow
+                documentSection.offsetHeight;
+                
+                setTimeout(() => {
+                    documentSection.style.opacity = '1';
+                }, 50);
+                
+                // Scroll to top
+                window.scrollTo(0, 0);
+            }, 300);
+        });
+
+        backToApi.addEventListener('click', function() {
+            // Hide document section with fade out
+            documentSection.style.opacity = '0';
+            documentSection.style.transition = 'opacity 0.3s ease-out';
+            
+            setTimeout(() => {
+                documentSection.classList.add('hidden');
+                documentSection.style.opacity = '1'; // Reset opacity for when we come back
+                
+                // Show API section with fade in
+                apiSection.classList.remove('hidden');
+                apiSection.style.opacity = '0';
+                apiSection.style.transition = 'opacity 0.3s ease-in';
+                
+                // Force a reflow
+                apiSection.offsetHeight;
+                
+            setTimeout(() => {
+                    apiSection.style.opacity = '1';
+            }, 50);
+                
+                // Scroll to top
+                window.scrollTo(0, 0);
+            }, 300);
+        });
+
+        // Create Chatbot Handler
+        createChatbot.addEventListener('click', async function() {
+            const docType = documentType.value;
+            if (!docType) {
+                alert('Please select a document type');
+                return;
+            }
+
+            let documentContent = '';
+            if (docType === 'custom') {
+                documentContent = customTextInput.value;
+                if (!documentContent.trim()) {
+                    alert('Please enter some text');
+                    return;
+                }
+            } else {
+                const files = uploadedFiles.querySelectorAll('.flex.items-center');
+                if (files.length === 0) {
+                    alert('Please upload at least one file');
+                    return;
+                }
+            }
+
+            try {
+                // Get selected purpose
+                const selectedPurpose = document.querySelector('.purpose-card.selected');
+                const purpose = selectedPurpose ? selectedPurpose.getAttribute('data-purpose') : null;
+
+                // Get selected template
+                const selectedTemplate = document.querySelector('.template-card.selected');
+                const template = selectedTemplate ? selectedTemplate.getAttribute('data-template') : null;
+                const templateName = selectedTemplate ? selectedTemplate.querySelector('h3').textContent : null;
+
+                // Get selected model and provider
+                const selectedModel = document.querySelector('.model-option.selected');
+                const modelType = selectedModel ? selectedModel.getAttribute('data-model') : null;
+                
+                // Get the specific model from the dropdown
+                let specificModel = null;
+                let modelDetails = {
+                    provider: modelType,
+                    name: null,
+                    version: null,
+                    capabilities: []
+                };
+
+                if (modelType === 'openai') {
+                    specificModel = document.getElementById('openaiModel').value;
+                    modelDetails = {
+                        provider: 'OpenAI',
+                        name: specificModel,
+                        version: specificModel.includes('4') ? '4' : '3.5',
+                        capabilities: ['text-generation', 'chat-completion'],
+                        maxTokens: specificModel.includes('4') ? 8192 : 4096
+                    };
+                } else if (modelType === 'google-ai') {
+                    specificModel = document.getElementById('googleModel').value;
+                    modelDetails = {
+                        provider: 'Google AI',
+                        name: specificModel,
+                        version: specificModel.includes('ultra') ? 'Ultra' : 'Pro',
+                        capabilities: ['text-generation', 'chat-completion', 'multimodal'],
+                        maxTokens: specificModel.includes('ultra') ? 32768 : 16384
+                    };
+                } else if (modelType === 'llama') {
+                    specificModel = document.getElementById('llamaModel').value;
+                    modelDetails = {
+                        provider: 'Meta AI',
+                        name: specificModel,
+                        version: specificModel.includes('13b') ? '13B' : '7B',
+                        capabilities: ['text-generation', 'chat-completion'],
+                        maxTokens: 4096
+                    };
+                }
+
+                // Get API key
+                const apiKeyInput = document.querySelector('.api-form:not(.hidden) input[type="password"]');
+                const apiKey = apiKeyInput ? apiKeyInput.value : null;
+
+                // Get uploaded files
+                const uploadedFilesList = Array.from(uploadedFiles.querySelectorAll('.flex.items-center')).map(file => ({
+                    name: file.getAttribute('data-filename'),
+                    type: file.getAttribute('data-filetype'),
+                    size: file.getAttribute('data-filesize')
+                }));
+
+                // Prepare data for Firebase
+                const chatbotData = {
+                    // Basic Information
+                    purpose: purpose,
+                    template: template,
+                    templateName: templateName,
+                    
+                    // API Configuration
+                    apiProvider: modelType,
+                    model: specificModel,
+                    modelDetails: modelDetails,
+                    apiKey: apiKey,
+                    
+                    // Document Configuration
+                    documentType: docType,
+                    documentContent: docType === 'custom' ? documentContent : 'files',
+                    files: uploadedFilesList,
+                    
+                    // Metadata
+                    createdAt: firebase.database.ServerValue.TIMESTAMP,
+                    status: 'active',
+                    lastUpdated: firebase.database.ServerValue.TIMESTAMP,
+                    version: '1.0',
+                    settings: {
+                        temperature: 0.7,
+                        maxTokens: modelDetails.maxTokens,
+                        topP: 1.0,
+                        frequencyPenalty: 0.0,
+                        presencePenalty: 0.0
+                    }
+                };
+
+                console.log('Final Data to be saved:', {
+                    ...chatbotData,
+                    apiKey: chatbotData.apiKey ? '***' : null // Mask API key in logs
+                });
+
+                // Save to Firebase
+                const result = await saveChatbotData(chatbotData);
+                console.log('Data saved successfully with ID:', result);
+                
+                // Show success message
+                alert('Chatbot created successfully!');
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error('Error creating chatbot:', error);
+                alert('Error creating chatbot. Please try again.');
+            }
+        });
+
+        // Function to save chatbot data
+        async function saveChatbotData(data) {
+            try {
+                const user = firebase.auth().currentUser;
+                if (!user) {
+                    throw new Error('User not authenticated');
+                }
+
+                // Create a new chatbot reference under the user's node
+                const chatbotRef = firebase.database().ref(`users/${user.uid}/chatbots`).push();
+                
+                // Prepare the data with user information
+                const chatbotData = {
+                    ...data,
+                    createdAt: firebase.database.ServerValue.TIMESTAMP,
+                    status: 'active'
+                };
+
+                // Save the data
+                await chatbotRef.set(chatbotData);
+                console.log('Chatbot data saved successfully with ID:', chatbotRef.key);
+                
+                return chatbotRef.key;
+            } catch (error) {
+                console.error('Error saving chatbot data:', error);
+                if (error.code === 'PERMISSION_DENIED') {
+                    throw new Error('You do not have permission to create chatbots. Please make sure you are logged in.');
+                }
+                throw error;
+            }
+        }
+    </script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBHepnJbS30yYzZkR1ZyQ1yF1eVKOEDbZo",
+            authDomain: "replace-8af45.firebaseapp.com",
+            databaseURL: "https://replace-8af45-default-rtdb.firebaseio.com",
+            projectId: "replace-8af45",
+            storageBucket: "replace-8af45.firebasestorage.app",
+            messagingSenderId: "228567518315",
+            appId: "1:228567518315:web:9b620686bd70d5afb4f52e",
+            measurementId: "G-7K6W5KETK2"
+        };
+
+        // Initialize Firebase if not already initialized
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+
+        // Check if user is logged in
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                // Redirect to login if not authenticated
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
+</body>
+</html> 

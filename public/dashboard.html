@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Chatbot Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script type="module" src="firebase-config.js"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+        .sidebar {
+            width: 280px;
+            transition: all 0.3s ease;
+        }
+        .main-content {
+            margin-left: 280px;
+            transition: all 0.3s ease;
+        }
+        .dashboard-card {
+            transition: transform 0.3s ease;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Sidebar -->
+    <div class="sidebar fixed h-full bg-white shadow-lg">
+        <div class="p-6">
+            <div class="flex items-center space-x-3 mb-8">
+                <span class="text-2xl font-bold text-indigo-600">🤖 Chatbot Generator</span>
+            </div>
+            <nav class="space-y-2">
+                <a href="#" class="flex items-center space-x-3 p-3 rounded-lg bg-indigo-50 text-indigo-600">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-robot"></i>
+                    <span>My Chatbots</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-database"></i>
+                    <span>Data Collection</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-code"></i>
+                    <span>API Integration</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-paint-brush"></i>
+                    <span>Customization</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content p-8">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800">Welcome back, <span id="userName">User</span>!</h1>
+            <div class="flex items-center space-x-4">
+                <a href="create-chatbot.html" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+                    <i class="fas fa-plus mr-2"></i>New Chatbot
+                </a>
+                <div class="flex items-center space-x-4">
+                    <img id="userAvatar" src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="Profile" class="w-10 h-10 rounded-full">
+                    <button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="dashboard-card bg-white p-6 rounded-lg shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500">Total Chatbots</p>
+                        <h3 class="text-2xl font-bold" id="totalChatbots">0</h3>
+                    </div>
+                    <div class="text-indigo-600 text-2xl">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-card bg-white p-6 rounded-lg shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500">Active Users</p>
+                        <h3 class="text-2xl font-bold" id="activeUsers">0</h3>
+                    </div>
+                    <div class="text-green-600 text-2xl">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-card bg-white p-6 rounded-lg shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500">Messages Today</p>
+                        <h3 class="text-2xl font-bold" id="messagesToday">0</h3>
+                    </div>
+                    <div class="text-blue-600 text-2xl">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-card bg-white p-6 rounded-lg shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500">API Usage</p>
+                        <h3 class="text-2xl font-bold" id="apiUsage">0%</h3>
+                    </div>
+                    <div class="text-purple-600 text-2xl">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Chatbots -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-xl font-bold mb-4">My Chatbots</h2>
+            <div class="space-y-4" id="chatbotsList">
+                <!-- Chatbots will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="dashboard-card bg-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-lg font-semibold mb-4">Create New Chatbot</h3>
+                <p class="text-gray-500 mb-4">Start building your next AI chatbot with our no-code builder</p>
+                <a href="create-chatbot.html" class="block w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 text-center">
+                    Get Started
+                </a>
+            </div>
+            <div class="dashboard-card bg-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-lg font-semibold mb-4">Manage Data</h3>
+                <p class="text-gray-500 mb-4">Upload and manage your chatbot's knowledge base</p>
+                <a href="#" class="block w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 text-center">
+                    Manage Data
+                </a>
+            </div>
+            <div class="dashboard-card bg-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-lg font-semibold mb-4">API Settings</h3>
+                <p class="text-gray-500 mb-4">Configure your AI model integrations</p>
+                <a href="#" class="block w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 text-center">
+                    Configure
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Chatbot Modal -->
+    <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold">Edit Chatbot</h3>
+                <button onclick="closeEditModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="editChatbotForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Purpose</label>
+                    <select id="editPurpose" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <option value="personal-assistant">Personal Assistant</option>
+                        <option value="customer-support">Customer Support</option>
+                        <option value="education">Education</option>
+                        <option value="e-commerce">E-commerce</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Template</label>
+                    <select id="editTemplate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <option value="minimal">Minimal</option>
+                        <option value="professional">Professional</option>
+                        <option value="creative">Creative</option>
+                        <option value="legal">Legal</option>
+                        <option value="tech">Tech</option>
+                        <option value="fitness">Fitness</option>
+                        <option value="food">Food</option>
+                        <option value="realestate">Real Estate</option>
+                        <option value="finance">Finance</option>
+                        <option value="travel">Travel</option>
+                        <option value="education">Education</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="ecommerce">E-commerce</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">API Provider</label>
+                    <select id="editApiProvider" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <option value="">-- Select --</option>
+                        <option value="openai">OpenAI</option>
+                        <option value="google-ai">Google AI Studio</option>
+                        <option value="llama">LLAMA</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Model</label>
+                    <select id="editModel" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <!-- Models will be dynamically loaded here based on API Provider -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">API Key</label>
+                    <input type="password" id="editApiKey" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Document Type</label>
+                    <select id="editDocumentType" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <option value="custom">Custom Text</option>
+                        <option value="files">Upload Files</option>
+                    </select>
+                </div>
+                <div id="editCustomTextContainer" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700">Custom Text</label>
+                    <textarea id="editCustomText" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+                </div>
+                <div id="editFilesContainer" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700">Uploaded Files</label>
+                    <div id="editUploadedFiles" class="mt-2 space-y-2">
+                        <!-- Files will be listed here -->
+                    </div>
+                    <input type="file" id="editFileInput" class="mt-2" multiple>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBHepnJbS30yYzZkR1ZyQ1yF1eVKOEDbZo",
+            authDomain: "replace-8af45.firebaseapp.com",
+            databaseURL: "https://replace-8af45-default-rtdb.firebaseio.com",
+            projectId: "replace-8af45",
+            storageBucket: "replace-8af45.firebasestorage.app",
+            messagingSenderId: "228567518315",
+            appId: "1:228567518315:web:9b620686bd70d5afb4f52e",
+            measurementId: "G-7K6W5KETK2"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+
+        // Check authentication state and load chatbot data
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                // Update user information
+                document.getElementById('userName').textContent = user.displayName || user.email;
+                document.getElementById('userAvatar').src = user.photoURL || 
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || user.email)}&background=6366f1&color=fff`;
+                
+                // Load user's chatbot data
+                loadUserChatbots(user.uid);
+            }
+        });
+
+        // Function to load user's chatbots
+        async function loadUserChatbots(userId) {
+            try {
+                const snapshot = await firebase.database().ref(`users/${userId}/chatbots`).once('value');
+                const chatbots = snapshot.val();
+
+                if (chatbots) {
+                    // Convert to array and sort by creation date
+                    const chatbotsArray = Object.entries(chatbots).map(([id, data]) => ({
+                        id,
+                        ...data
+                    })).sort((a, b) => b.createdAt - a.createdAt);
+
+                    // Update total chatbots count
+                    document.getElementById('totalChatbots').textContent = chatbotsArray.length;
+
+                    // Update chatbots list
+                    const chatbotsList = document.getElementById('chatbotsList');
+                    chatbotsList.innerHTML = ''; // Clear existing list
+
+                    chatbotsArray.forEach(chatbot => {
+                        const chatbotElement = document.createElement('div');
+                        chatbotElement.className = 'bg-white border rounded-lg p-4 hover:shadow-md transition-shadow';
+                        chatbotElement.innerHTML = `
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-lg font-semibold">${chatbot.purpose}</h3>
+                                <span class="text-xs text-gray-500">${new Date(chatbot.createdAt).toLocaleDateString()}</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-2">Template: ${chatbot.template}</p>
+                            <div class="flex items-center text-gray-500 text-sm mb-4">
+                                <i class="fas fa-file-alt mr-2"></i>
+                                <span>${chatbot.files ? chatbot.files.length : 0} documents</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="editChatbot('${chatbot.id}')" class="px-3 py-1 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600">
+                                    <i class="fas fa-edit mr-1"></i>Edit
+                                </button>
+                                <button onclick="deleteChatbot('${chatbot.id}')" class="px-3 py-1 bg-red-500 text-white rounded-md text-sm hover:bg-red-600">
+                                    <i class="fas fa-trash-alt mr-1"></i>Delete
+                                </button>
+                                <button onclick="generateFiles('${chatbot.id}', event)" class="px-3 py-1 bg-green-500 text-white rounded-md text-sm hover:bg-green-600">
+                                    <i class="fas fa-cogs mr-1"></i>Generate Files
+                                </button>
+                                <a href="#" class="px-3 py-1 bg-gray-300 text-gray-800 rounded-md text-sm hover:bg-gray-400">
+                                    <i class="fas fa-eye mr-1"></i>View
+                                </a>
+                            </div>
+                        `;
+                        chatbotsList.appendChild(chatbotElement);
+                    });
+                } else {
+                    // No chatbots found
+                    document.getElementById('totalChatbots').textContent = '0';
+                    document.getElementById('chatbotsList').innerHTML = `
+                        <div class="text-center text-gray-500 py-8">
+                            <i class="fas fa-robot text-4xl mb-4"></i>
+                            <p>No chatbots created yet</p>
+                            <a href="create-chatbot.html" class="inline-block mt-4 text-indigo-600 hover:text-indigo-800">
+                                Create your first chatbot
+                            </a>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading chatbots:', error);
+                alert('Error loading chatbots. Please try again.');
+            }
+        }
+
+        let currentEditingChatbotId = null;
+
+        // Define comprehensive model data
+        const allModels = {
+            'openai': [
+                { value: 'gpt-3.5-turbo', text: 'GPT-3.5 Turbo', details: { provider: 'OpenAI', name: 'gpt-3.5-turbo', version: '3.5', capabilities: ['text-generation', 'chat-completion'], maxTokens: 4096 } },
+                { value: 'gpt-3.5-turbo-instruct', text: 'GPT-3.5 Turbo Instruct', details: { provider: 'OpenAI', name: 'gpt-3.5-turbo-instruct', version: '3.5', capabilities: ['text-generation'], maxTokens: 4096 } },
+                { value: 'gpt-4', text: 'GPT-4', details: { provider: 'OpenAI', name: 'gpt-4', version: '4', capabilities: ['text-generation', 'chat-completion'], maxTokens: 8192 } },
+                { value: 'gpt-4-turbo', text: 'GPT-4 Turbo', details: { provider: 'OpenAI', name: 'gpt-4-turbo', version: '4', capabilities: ['text-generation', 'chat-completion'], maxTokens: 128000 } },
+                { value: 'text-davinci-003', text: 'Text-Davinci-003 (Legacy)', details: { provider: 'OpenAI', name: 'text-davinci-003', version: 'Legacy', capabilities: ['text-generation'], maxTokens: 4096 } },
+            ],
+            'google-ai': [
+                { value: 'gemini-pro', text: 'Gemini Pro', details: { provider: 'Google AI', name: 'gemini-pro', version: 'Pro', capabilities: ['text-generation', 'chat-completion', 'multimodal'], maxTokens: 16384 } },
+                { value: 'gemini-pro-vision', text: 'Gemini Pro Vision', details: { provider: 'Google AI', name: 'gemini-pro-vision', version: 'Pro Vision', capabilities: ['image-understanding', 'multimodal'], maxTokens: 16384 } },
+                { value: 'gemini-ultra', text: 'Gemini Ultra', details: { provider: 'Google AI', name: 'gemini-ultra', version: 'Ultra', capabilities: ['text-generation', 'chat-completion', 'multimodal'], maxTokens: 32768 } },
+                { value: 'gemini-1.5-flash', text: 'Gemini 1.5 Flash', details: { provider: 'Google AI', name: 'gemini-1.5-flash', version: '1.5 Flash', capabilities: ['text-generation', 'chat-completion', 'long-context'], maxTokens: 1000000 } },
+                { value: 'gemini-1.5-pro', text: 'Gemini 1.5 Pro', details: { provider: 'Google AI', name: 'gemini-1.5-pro', version: '1.5 Pro', capabilities: ['text-generation', 'chat-completion', 'long-context', 'multimodal'], maxTokens: 1000000 } },
+                { value: 'gemini-1.5-flash-8b', text: 'Gemini 1.5 Flash 8B', details: { provider: 'Google AI', name: 'gemini-1.5-flash-8b', version: '1.5 Flash 8B', capabilities: ['text-generation', 'chat-completion'], maxTokens: 8000 } },
+                { value: 'text-bison-001', text: 'Text-Bison-001 (Legacy)', details: { provider: 'Google AI', name: 'text-bison-001', version: 'Legacy', capabilities: ['text-generation'], maxTokens: 8192 } },
+            ],
+            'llama': [
+                { value: 'llama2-7b', text: 'LLAMA 2 (7B)', details: { provider: 'Meta AI', name: 'llama2-7b', version: '7B', capabilities: ['text-generation', 'chat-completion'], maxTokens: 4096 } },
+                { value: 'llama2-7b-chat', text: 'LLAMA 2 (7B Chat)', details: { provider: 'Meta AI', name: 'llama2-7b-chat', version: '7B Chat', capabilities: ['text-generation', 'chat-completion'], maxTokens: 4096 } },
+                { value: 'llama2-13b', text: 'LLAMA 2 (13B)', details: { provider: 'Meta AI', name: 'llama2-13b', version: '13B', capabilities: ['text-generation', 'chat-completion'], maxTokens: 4096 } },
+                { value: 'llama2-70b', text: 'LLAMA 2 (70B)', details: { provider: 'Meta AI', name: 'llama2-70b', version: '70B', capabilities: ['text-generation', 'chat-completion'], maxTokens: 4096 } },
+            ]
+        };
+
+        const editApiProvider = document.getElementById('editApiProvider');
+        const editModel = document.getElementById('editModel');
+
+        // Function to populate model dropdown based on API provider
+        function populateEditModels(provider, selectedModelValue = null) {
+            editModel.innerHTML = ''; // Clear existing options
+            const models = allModels[provider];
+            if (models) {
+                models.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model.value;
+                    option.textContent = model.text;
+                    editModel.appendChild(option);
+                });
+                // Set selected model if provided
+                if (selectedModelValue) {
+                    editModel.value = selectedModelValue;
+                }
+            }
+        }
+
+        // Event listener for API Provider change
+        editApiProvider.addEventListener('change', function() {
+            populateEditModels(this.value);
+        });
+
+        // Function to show edit modal
+        async function editChatbot(chatbotId) {
+            currentEditingChatbotId = chatbotId;
+            const user = firebase.auth().currentUser;
+            if (!user) return;
+
+            try {
+                const snapshot = await firebase.database().ref(`users/${user.uid}/chatbots/${chatbotId}`).once('value');
+                const chatbot = snapshot.val();
+                
+                if (chatbot) {
+                    // Fill form with existing data
+                    document.getElementById('editPurpose').value = chatbot.purpose || '';
+                    document.getElementById('editTemplate').value = chatbot.template || '';
+                    
+                    // Set API Provider and populate models
+                    editApiProvider.value = chatbot.apiProvider || '';
+                    populateEditModels(chatbot.apiProvider, chatbot.model);
+
+                    document.getElementById('editApiKey').value = chatbot.apiKey || '';
+                    document.getElementById('editDocumentType').value = chatbot.documentType || 'custom';
+                    
+                    // Handle document type specific fields
+                    if (chatbot.documentType === 'custom') {
+                        document.getElementById('editCustomTextContainer').classList.remove('hidden');
+                        document.getElementById('editFilesContainer').classList.add('hidden');
+                        document.getElementById('editCustomText').value = chatbot.documentContent || '';
+                    } else {
+                        document.getElementById('editCustomTextContainer').classList.add('hidden');
+                        document.getElementById('editFilesContainer').classList.remove('hidden');
+                        const filesContainer = document.getElementById('editUploadedFiles');
+                        filesContainer.innerHTML = '';
+                        if (chatbot.files && chatbot.files.length > 0) {
+                            chatbot.files.forEach(file => {
+                                const fileItem = document.createElement('div');
+                                fileItem.className = 'flex items-center justify-between p-2 bg-gray-50 rounded-md';
+                                fileItem.innerHTML = `
+                                    <div class="flex items-center">
+                                        <i class="fas fa-file text-gray-400 mr-2"></i>
+                                        <span class="text-sm text-gray-700">${file.name}</span>
+                                    </div>
+                                    <button type="button" class="text-red-500 hover:text-red-700" onclick="this.parentElement.remove()">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                `;
+                                filesContainer.appendChild(fileItem);
+                            });
+                        }
+                    }
+
+                    // Show modal
+                    document.getElementById('editModal').classList.remove('hidden');
+                    document.getElementById('editModal').classList.add('flex');
+                }
+            } catch (error) {
+                console.error('Error loading chatbot data:', error);
+                alert('Error loading chatbot data. Please try again.');
+            }
+        }
+
+        // Function to close edit modal
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+            document.getElementById('editModal').classList.remove('flex');
+            currentEditingChatbotId = null;
+        }
+
+        // Handle document type change
+        document.getElementById('editDocumentType').addEventListener('change', function() {
+            if (this.value === 'custom') {
+                document.getElementById('editCustomTextContainer').classList.remove('hidden');
+                document.getElementById('editFilesContainer').classList.add('hidden');
+            } else {
+                document.getElementById('editCustomTextContainer').classList.add('hidden');
+                document.getElementById('editFilesContainer').classList.remove('hidden');
+            }
+        });
+
+        // Handle form submission
+        document.getElementById('editChatbotForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!currentEditingChatbotId) return;
+
+            const user = firebase.auth().currentUser;
+            if (!user) return;
+
+            try {
+                const selectedApiProvider = editApiProvider.value;
+                const selectedModelValue = editModel.value;
+
+                let modelDetails = null;
+                const modelsForProvider = allModels[selectedApiProvider];
+                if (modelsForProvider) {
+                    modelDetails = modelsForProvider.find(model => model.value === selectedModelValue)?.details || null;
+                }
+
+                const formData = {
+                    purpose: document.getElementById('editPurpose').value,
+                    template: document.getElementById('editTemplate').value,
+                    apiProvider: selectedApiProvider,
+                    model: selectedModelValue,
+                    modelDetails: modelDetails,
+                    apiKey: document.getElementById('editApiKey').value,
+                    documentType: document.getElementById('editDocumentType').value,
+                    documentContent: document.getElementById('editDocumentType').value === 'custom' 
+                        ? document.getElementById('editCustomText').value 
+                        : null,
+                    files: Array.from(document.getElementById('editUploadedFiles').children).map(fileItem => ({
+                        name: fileItem.querySelector('span').textContent,
+                        type: 'file',
+                        size: '0'
+                    })),
+                    lastUpdated: firebase.database.ServerValue.TIMESTAMP,
+                    version: '1.0' // Assuming version remains 1.0 on update, or you can retrieve and increment
+                };
+
+                await firebase.database().ref(`users/${user.uid}/chatbots/${currentEditingChatbotId}`).update(formData);
+                
+                alert('Chatbot updated successfully!');
+                closeEditModal();
+                loadUserChatbots(user.uid); // Reload the dashboard
+            } catch (error) {
+                console.error('Error updating chatbot:', error);
+                alert('Error updating chatbot. Please try again.');
+            }
+        });
+
+        // Function to delete a chatbot
+        async function deleteChatbot(chatbotId) {
+            if (confirm('Are you sure you want to delete this chatbot?')) {
+                try {
+                    const user = firebase.auth().currentUser;
+                    if (!user) {
+                        throw new Error('User not authenticated');
+                    }
+
+                    await firebase.database().ref(`users/${user.uid}/chatbots/${chatbotId}`).remove();
+                    alert('Chatbot deleted successfully');
+                    loadUserChatbots(user.uid); // Reload the dashboard
+                } catch (error) {
+                    console.error('Error deleting chatbot:', error);
+                    alert('Error deleting chatbot. Please try again.');
+                }
+            }
+        }
+
+        // Function to logout
+        function logout() {
+            firebase.auth().signOut().then(() => {
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error('Error signing out:', error);
+            });
+        }
+
+        // Add server configuration
+        const FILE_SERVER_URL = 'http://localhost:3000'; // Change this to your file generation server URL
+
+        // Test server connection
+        async function testServerConnection() {
+            try {
+                const response = await fetch(`${FILE_SERVER_URL}/api/test`);
+                if (!response.ok) {
+                    throw new Error(`Server returned ${response.status}`);
+                }
+                const data = await response.json();
+                console.log('Server test response:', data);
+                return true;
+            } catch (error) {
+                console.error('Server connection test failed:', error);
+                return false;
+            }
+        }
+
+        // Generate files function
+        async function generateFiles(chatbotId, event) {
+            const button = event.target.closest('button');
+            const originalText = button.innerHTML;
+            
+            try {
+                // Test server connection first
+                const isServerConnected = await testServerConnection();
+                if (!isServerConnected) {
+                    throw new Error('Cannot connect to file generation server. Please try again later.');
+                }
+
+                // Show loading state
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+                button.disabled = true;
+
+                console.log('Generating files for chatbot:', chatbotId);
+
+                // Call the backend API
+                const response = await fetch(`${FILE_SERVER_URL}/api/generate-chatbot/${chatbotId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                console.log('Response status:', response.status);
+                const responseText = await response.text();
+                console.log('Response text:', responseText);
+
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status} - ${responseText}`);
+                }
+
+                const result = JSON.parse(responseText);
+                console.log('Generation result:', result);
+
+                if (result.success) {
+                    // Create a temporary link to download the files
+                    const link = document.createElement('a');
+                    link.href = `${FILE_SERVER_URL}/api/download/${chatbotId}`;
+                    link.download = `chatbot-${chatbotId}.zip`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    // Show success message
+                    showNotification('Files generated successfully!', 'success');
+                } else {
+                    throw new Error(result.error || 'Failed to generate files');
+                }
+            } catch (error) {
+                console.error('Error generating files:', error);
+                showNotification(error.message, 'error');
+            } finally {
+                // Reset button state
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg ${
+                type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            } text-white z-50`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html> 
