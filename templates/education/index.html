@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Education Tutor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .chat-container {
+            height: calc(100vh - 180px);
+        }
+        .message {
+            max-width: 80%;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 1rem;
+        }
+        .user-message {
+            background-color: #E8F5E9;
+            margin-left: auto;
+            border-bottom-right-radius: 0.25rem;
+        }
+        .bot-message {
+            background-color: #F5F5F5;
+            margin-right: auto;
+            border-bottom-left-radius: 0.25rem;
+        }
+        .typing-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            border-top-color: #333;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-white shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                <div class="flex items-center">
+                    <i class="fas fa-graduation-cap text-yellow-500 text-2xl mr-3"></i>
+                    <h1 class="text-xl font-semibold text-gray-900">Education Tutor</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-history"></i>
+                    </button>
+                    <button class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Chat Area -->
+        <main class="flex-1 overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="chat-container overflow-y-auto p-4">
+                    <!-- Welcome Message -->
+                    <div class="message bot-message">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-robot text-yellow-500 text-xl"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-gray-900">Education Tutor</p>
+                                <p class="text-sm text-gray-700">Hello! I'm your personal education tutor. I can help you with:</p>
+                                <ul class="list-disc list-inside text-sm text-gray-700 mt-2">
+                                    <li>Subject-specific tutoring</li>
+                                    <li>Homework assistance</li>
+                                    <li>Study techniques</li>
+                                    <li>Practice questions</li>
+                                    <li>Learning resources</li>
+                                </ul>
+                                <p class="text-sm text-gray-700 mt-2">What would you like to learn today?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Input Area -->
+        <div class="bg-white border-t">
+            <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+                <div class="flex space-x-4">
+                    <div class="flex-1">
+                        <input type="text" 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                               placeholder="Ask your learning question...">
+                    </div>
+                    <button class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <!-- Quick Actions -->
+                <div class="mt-4 flex space-x-2 overflow-x-auto">
+                    <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200">
+                        <i class="fas fa-calculator mr-1"></i>Math
+                    </button>
+                    <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200">
+                        <i class="fas fa-flask mr-1"></i>Science
+                    </button>
+                    <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200">
+                        <i class="fas fa-book mr-1"></i>Literature
+                    </button>
+                    <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200">
+                        <i class="fas fa-globe mr-1"></i>History
+                    </button>
+                    <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200">
+                        <i class="fas fa-language mr-1"></i>Languages
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const input = document.querySelector('input');
+            const sendButton = document.querySelector('button');
+            const chatContainer = document.querySelector('.chat-container');
+
+            function addMessage(message, isUser = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+                
+                const content = `
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <i class="fas ${isUser ? 'fa-user' : 'fa-robot'} ${isUser ? 'text-gray-500' : 'text-yellow-500'} text-xl"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-900">${isUser ? 'You' : 'Education Tutor'}</p>
+                            <p class="text-sm text-gray-700">${message}</p>
+                        </div>
+                    </div>
+                `;
+                
+                messageDiv.innerHTML = content;
+                chatContainer.appendChild(messageDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            function handleUserInput() {
+                const message = input.value.trim();
+                if (message) {
+                    addMessage(message, true);
+                    input.value = '';
+                    
+                    // Simulate bot response
+                    setTimeout(() => {
+                        addMessage("That's a great question! Let me explain this concept step by step...");
+                    }, 1000);
+                }
+            }
+
+            sendButton.addEventListener('click', handleUserInput);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    handleUserInput();
+                }
+            });
+
+            // Quick action buttons
+            document.querySelectorAll('.quick-action').forEach(button => {
+                button.addEventListener('click', () => {
+                    const action = button.textContent.trim();
+                    addMessage(action, true);
+                    // Handle quick action response
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

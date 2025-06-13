@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal Chatbot Template</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .chat-container {
+            height: calc(100vh - 80px);
+        }
+        .message {
+            max-width: 80%;
+            margin-bottom: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+        }
+        .user-message {
+            background-color: #4F46E5;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 0.25rem;
+        }
+        .bot-message {
+            background-color: #F3F4F6;
+            color: #1F2937;
+            margin-right: auto;
+            border-bottom-left-radius: 0.25rem;
+        }
+        .typing-indicator {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.5rem;
+        }
+        .typing-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            background-color: #9CA3AF;
+            border-radius: 50%;
+            animation: typing 1s infinite ease-in-out;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-0.5rem); }
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <div class="flex flex-col h-screen">
+        <!-- Header -->
+        <header class="bg-white border-b p-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center">
+                        <i class="fas fa-robot text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold">Minimal Assistant</h1>
+                        <p class="text-sm text-gray-500">Online</p>
+                    </div>
+                </div>
+                <button class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Chat Container -->
+        <div class="chat-container overflow-y-auto p-4 space-y-4">
+            <!-- Welcome Message -->
+            <div class="message bot-message">
+                <p>Hello! I'm your minimal assistant. How can I help you today?</p>
+            </div>
+
+            <!-- Sample User Message -->
+            <div class="message user-message">
+                <p>Hi! Can you tell me about yourself?</p>
+            </div>
+
+            <!-- Sample Bot Response -->
+            <div class="message bot-message">
+                <p>I'm a minimalist chatbot designed to help you with your tasks in a clean and efficient way. I can assist with:</p>
+                <ul class="list-disc list-inside mt-2">
+                    <li>Answering questions</li>
+                    <li>Providing information</li>
+                    <li>Helping with tasks</li>
+                </ul>
+            </div>
+
+            <!-- Typing Indicator -->
+            <div class="message bot-message">
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="border-t p-4 bg-white">
+            <div class="flex items-center space-x-4">
+                <button class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <input type="text" 
+                       placeholder="Type your message..." 
+                       class="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:border-indigo-500">
+                <button class="bg-indigo-600 text-white rounded-full p-2 hover:bg-indigo-700">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add smooth scrolling to bottom
+        const chatContainer = document.querySelector('.chat-container');
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+        // Handle input
+        const input = document.querySelector('input');
+        const sendButton = document.querySelector('button:last-child');
+
+        function sendMessage() {
+            const message = input.value.trim();
+            if (message) {
+                // Add user message
+                const userMessage = document.createElement('div');
+                userMessage.className = 'message user-message';
+                userMessage.innerHTML = `<p>${message}</p>`;
+                chatContainer.appendChild(userMessage);
+
+                // Clear input
+                input.value = '';
+
+                // Show typing indicator
+                const typingIndicator = document.createElement('div');
+                typingIndicator.className = 'message bot-message';
+                typingIndicator.innerHTML = `
+                    <div class="typing-indicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                `;
+                chatContainer.appendChild(typingIndicator);
+
+                // Scroll to bottom
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+
+                // Simulate bot response
+                setTimeout(() => {
+                    // Remove typing indicator
+                    chatContainer.removeChild(typingIndicator);
+
+                    // Add bot response
+                    const botMessage = document.createElement('div');
+                    botMessage.className = 'message bot-message';
+                    botMessage.innerHTML = `<p>I received your message: "${message}"</p>`;
+                    chatContainer.appendChild(botMessage);
+
+                    // Scroll to bottom
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                }, 1500);
+            }
+        }
+
+        // Send message on button click
+        sendButton.addEventListener('click', sendMessage);
+
+        // Send message on Enter key
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html> 

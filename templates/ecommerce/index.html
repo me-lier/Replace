@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Chatbot Template</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .chat-container {
+            height: calc(100vh - 80px);
+        }
+        .message {
+            max-width: 80%;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+        .user-message {
+            background-color: #DC2626;
+            color: white;
+            margin-left: auto;
+        }
+        .bot-message {
+            background-color: white;
+            color: #1F2937;
+            margin-right: auto;
+            border: 1px solid #E5E7EB;
+        }
+        .typing-indicator {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.5rem;
+        }
+        .typing-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            background-color: #9CA3AF;
+            border-radius: 50%;
+            animation: typing 1s infinite ease-in-out;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-0.5rem); }
+        }
+        .product-card {
+            border: 1px solid #E5E7EB;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .quick-replies {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .quick-reply {
+            background-color: #F3F4F6;
+            border: 1px solid #E5E7EB;
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quick-reply:hover {
+            background-color: #E5E7EB;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="flex flex-col h-screen">
+        <!-- Header -->
+        <header class="bg-white border-b p-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center">
+                        <i class="fas fa-shopping-cart text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold">Shopping Assistant</h1>
+                        <p class="text-sm text-gray-500">Ready to help you shop</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-shopping-bag"></i>
+                    </button>
+                    <button class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Chat Container -->
+        <div class="chat-container overflow-y-auto p-4 space-y-4">
+            <!-- Welcome Message -->
+            <div class="message bot-message">
+                <p>Welcome to our store! How can I help you find the perfect product?</p>
+                <div class="quick-replies">
+                    <button class="quick-reply">New Arrivals</button>
+                    <button class="quick-reply">Best Sellers</button>
+                    <button class="quick-reply">Special Offers</button>
+                    <button class="quick-reply">Track Order</button>
+                </div>
+            </div>
+
+            <!-- Sample User Message -->
+            <div class="message user-message">
+                <p>Show me the latest products in electronics.</p>
+            </div>
+
+            <!-- Sample Bot Response with Products -->
+            <div class="message bot-message">
+                <p>Here are our latest electronics products:</p>
+                <div class="grid grid-cols-2 gap-4 mt-4">
+                    <div class="product-card">
+                        <img src="https://via.placeholder.com/150" alt="Product" class="w-full h-32 object-cover">
+                        <div class="p-3">
+                            <h3 class="font-semibold">Wireless Earbuds</h3>
+                            <p class="text-sm text-gray-600">$99.99</p>
+                            <button class="mt-2 w-full bg-red-600 text-white py-1 rounded hover:bg-red-700">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://via.placeholder.com/150" alt="Product" class="w-full h-32 object-cover">
+                        <div class="p-3">
+                            <h3 class="font-semibold">Smart Watch</h3>
+                            <p class="text-sm text-gray-600">$199.99</p>
+                            <button class="mt-2 w-full bg-red-600 text-white py-1 rounded hover:bg-red-700">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="quick-replies mt-4">
+                    <button class="quick-reply">View More</button>
+                    <button class="quick-reply">Filter by Price</button>
+                    <button class="quick-reply">Sort by Rating</button>
+                </div>
+            </div>
+
+            <!-- Typing Indicator -->
+            <div class="message bot-message">
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="border-t p-4 bg-white">
+            <div class="flex items-center space-x-4">
+                <button class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-image"></i>
+                </button>
+                <input type="text" 
+                       placeholder="Search products or ask for help..." 
+                       class="flex-1 border rounded-lg px-4 py-2 focus:outline-none focus:border-red-600">
+                <button class="bg-red-600 text-white rounded-lg px-4 py-2 hover:bg-red-700">
+                    Send
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add smooth scrolling to bottom
+        const chatContainer = document.querySelector('.chat-container');
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+        // Handle input
+        const input = document.querySelector('input');
+        const sendButton = document.querySelector('button:last-child');
+        const quickReplies = document.querySelectorAll('.quick-reply');
+
+        function sendMessage(message = null) {
+            const messageText = message || input.value.trim();
+            if (messageText) {
+                // Add user message
+                const userMessage = document.createElement('div');
+                userMessage.className = 'message user-message';
+                userMessage.innerHTML = `<p>${messageText}</p>`;
+                chatContainer.appendChild(userMessage);
+
+                // Clear input if not a quick reply
+                if (!message) {
+                    input.value = '';
+                }
+
+                // Show typing indicator
+                const typingIndicator = document.createElement('div');
+                typingIndicator.className = 'message bot-message';
+                typingIndicator.innerHTML = `
+                    <div class="typing-indicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                `;
+                chatContainer.appendChild(typingIndicator);
+
+                // Scroll to bottom
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+
+                // Simulate bot response
+                setTimeout(() => {
+                    // Remove typing indicator
+                    chatContainer.removeChild(typingIndicator);
+
+                    // Add bot response
+                    const botMessage = document.createElement('div');
+                    botMessage.className = 'message bot-message';
+                    botMessage.innerHTML = `
+                        <p>I found some products related to: "${messageText}"</p>
+                        <div class="grid grid-cols-2 gap-4 mt-4">
+                            <div class="product-card">
+                                <img src="https://via.placeholder.com/150" alt="Product" class="w-full h-32 object-cover">
+                                <div class="p-3">
+                                    <h3 class="font-semibold">Product Name</h3>
+                                    <p class="text-sm text-gray-600">$99.99</p>
+                                    <button class="mt-2 w-full bg-red-600 text-white py-1 rounded hover:bg-red-700">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="product-card">
+                                <img src="https://via.placeholder.com/150" alt="Product" class="w-full h-32 object-cover">
+                                <div class="p-3">
+                                    <h3 class="font-semibold">Product Name</h3>
+                                    <p class="text-sm text-gray-600">$149.99</p>
+                                    <button class="mt-2 w-full bg-red-600 text-white py-1 rounded hover:bg-red-700">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="quick-replies mt-4">
+                            <button class="quick-reply">View More</button>
+                            <button class="quick-reply">Filter by Price</button>
+                            <button class="quick-reply">Sort by Rating</button>
+                        </div>
+                    `;
+                    chatContainer.appendChild(botMessage);
+
+                    // Add event listeners to new quick replies
+                    botMessage.querySelectorAll('.quick-reply').forEach(button => {
+                        button.addEventListener('click', () => {
+                            sendMessage(button.textContent);
+                        });
+                    });
+
+                    // Add event listeners to Add to Cart buttons
+                    botMessage.querySelectorAll('.product-card button').forEach(button => {
+                        button.addEventListener('click', () => {
+                            const productName = button.closest('.product-card').querySelector('h3').textContent;
+                            sendMessage(`Add ${productName} to cart`);
+                        });
+                    });
+
+                    // Scroll to bottom
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                }, 1500);
+            }
+        }
+
+        // Send message on button click
+        sendButton.addEventListener('click', () => sendMessage());
+
+        // Send message on Enter key
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Handle quick replies
+        quickReplies.forEach(button => {
+            button.addEventListener('click', () => {
+                sendMessage(button.textContent);
+            });
+        });
+    </script>
+</body>
+</html> 

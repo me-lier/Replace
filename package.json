@@ -1,0 +1,16 @@
+{
+  "name": "chatbot-generator",
+  "version": "1.0.0",
+  "description": "AI Chatbot Generator Platform",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "firebase": "^10.8.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+} 

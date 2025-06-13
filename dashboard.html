@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Chat-Bot Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="firebase-config.js"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+        .sidebar {
+            width: 280px;
+            transition: all 0.3s ease;
+        }
+        .main-content {
+            margin-left: 280px;
+            transition: all 0.3s ease;
+        }
+        .dashboard-card {
+            transition: transform 0.3s ease;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Sidebar -->
+    <div class="sidebar fixed h-full bg-white shadow-lg">
+        <div class="p-6">
+            <div class="flex items-center space-x-3 mb-8">
+                <span class="text-2xl font-bold text-indigo-600">🤖 Chat-Bot Generator</span>
+            </div>
+            <nav class="space-y-2">
+                <a href="#" class="flex items-center space-x-3 p-3 rounded-lg bg-indigo-50 text-indigo-600">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-robot"></i>
+                    <span>My Chatbots</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-database"></i>
+                    <span>Data Collection</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-code"></i>
+                    <span>API Integration</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-paint-brush"></i>
+                    <span>Customization</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content p-8">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800">Welcome back, <span id="userName">User</span>!</h1>
+            <div class="flex items-center space-x-4">
+                <a href="create-chatbot.html" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+                    <i class="fas fa-plus mr-2"></i>New Chatbot
+                </a>
+                <div class="relative">
+                    <img id="userAvatar" src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="Profile" class="w-10 h-10 rounded-full cursor-pointer">
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="dashboard-card bg-white p-6 rounded-lg shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500">Total Chatbots</p>
+                        <h3 class="text-2xl font-bold" id="totalChatbots">0</h3>
+                    </div>
+                    <div class="text-indigo-600 text-2xl">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-card bg-white p-6 rounded-lg shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500">Active Users</p>
+                        <h3 class="text-2xl font-bold" id="activeUsers">0</h3>
+                    </div>
+                    <div class="text-green-600 text-2xl">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-card bg-white p-6 rounded-lg shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500">Messages Today</p>
+                        <h3 class="text-2xl font-bold" id="messagesToday">0</h3>
+                    </div>
+                    <div class="text-blue-600 text-2xl">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-card bg-white p-6 rounded-lg shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500">API Usage</p>
+                        <h3 class="text-2xl font-bold" id="apiUsage">0%</h3>
+                    </div>
+                    <div class="text-purple-600 text-2xl">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-xl font-bold mb-4">Recent Activity</h2>
+            <div class="space-y-4" id="recentActivity">
+                <!-- Activity items will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="dashboard-card bg-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-lg font-semibold mb-4">Create New Chatbot</h3>
+                <p class="text-gray-500 mb-4">Start building your next AI chatbot with our no-code builder</p>
+                <a href="create-chatbot.html" class="block w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 text-center">
+                    Get Started
+                </a>
+            </div>
+            <div class="dashboard-card bg-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-lg font-semibold mb-4">Manage Data</h3>
+                <p class="text-gray-500 mb-4">Upload and manage your chatbot's knowledge base</p>
+                <a href="#" class="block w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 text-center">
+                    Manage Data
+                </a>
+            </div>
+            <div class="dashboard-card bg-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-lg font-semibold mb-4">API Settings</h3>
+                <p class="text-gray-500 mb-4">Configure your AI model integrations</p>
+                <a href="#" class="block w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 text-center">
+                    Configure
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Firebase and get user data
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            firebase.auth().onAuthStateChanged(function(user) {
+                if (user) {
+                    // Update user information
+                    document.getElementById('userName').textContent = user.displayName || user.email;
+                    document.getElementById('userAvatar').src = user.photoURL || 
+                        `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || user.email)}&background=6366f1&color=fff`;
+                    
+                    // Load user's chatbots
+                    loadUserChatbots(user.uid);
+                    // Load recent activity
+                    loadRecentActivity(user.uid);
+                } else {
+                    // Redirect to login if not authenticated
+                    window.location.href = 'login.html';
+                }
+            });
+        });
+
+        // Function to load user's chatbots
+        function loadUserChatbots(userId) {
+            const db = firebase.firestore();
+            db.collection('chatbots')
+                .where('userId', '==', userId)
+                .get()
+                .then((querySnapshot) => {
+                    document.getElementById('totalChatbots').textContent = querySnapshot.size;
+                })
+                .catch((error) => {
+                    console.error("Error loading chatbots:", error);
+                });
+        }
+
+        // Function to load recent activity
+        function loadRecentActivity(userId) {
+            const db = firebase.firestore();
+            const activityContainer = document.getElementById('recentActivity');
+            
+            db.collection('activities')
+                .where('userId', '==', userId)
+                .orderBy('timestamp', 'desc')
+                .limit(3)
+                .get()
+                .then((querySnapshot) => {
+                    activityContainer.innerHTML = '';
+                    querySnapshot.forEach((doc) => {
+                        const activity = doc.data();
+                        const activityElement = createActivityElement(activity);
+                        activityContainer.appendChild(activityElement);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error loading activities:", error);
+                });
+        }
+
+        // Function to create activity element
+        function createActivityElement(activity) {
+            const div = document.createElement('div');
+            div.className = 'flex items-center space-x-4 p-4 bg-gray-50 rounded-lg';
+            
+            const icon = document.createElement('div');
+            icon.className = `text-${activity.iconColor}-600`;
+            icon.innerHTML = `<i class="fas ${activity.icon} text-2xl"></i>`;
+            
+            const content = document.createElement('div');
+            content.innerHTML = `
+                <p class="font-semibold">${activity.title}</p>
+                <p class="text-gray-500 text-sm">${activity.timeAgo}</p>
+            `;
+            
+            div.appendChild(icon);
+            div.appendChild(content);
+            return div;
+        }
+    </script>
+</body>
+</html> 
