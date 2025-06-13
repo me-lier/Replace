@@ -5,6 +5,7 @@
 
 # Configuration files
 config.js
+serviceAccountKey.json
 
 # Dependencies
 node_modules/
@@ -29,3 +30,4 @@ Thumbs.db
 
 # New additions
 output/ 
+

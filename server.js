@@ -3,13 +3,28 @@ const fs = require('fs').promises;
 const path = require('path');
 const archiver = require('archiver');
 const admin = require('firebase-admin');
+require('dotenv').config(); // Load environment variables from .env file
 
-// Load service account key
-const serviceAccount = require('./serviceAccountKey.json');
+// Load service account key from file path specified in environment variable
+const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT_FILE_PATH;
+
+if (!serviceAccountPath) {
+  console.error('FIREBASE_SERVICE_ACCOUNT_FILE_PATH environment variable is not set.');
+  process.exit(1);
+}
+
+let serviceAccount;
+try {
+  const rawServiceAccount = require(serviceAccountPath);
+  serviceAccount = rawServiceAccount;
+} catch (error) {
+  console.error(`Failed to load service account file from ${serviceAccountPath}:`, error);
+  process.exit(1);
+}
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://replace-8af45-default-rtdb.firebaseio.com"
+  databaseURL: process.env.FIREBASE_DATABASE_URL_SERVER || "https://replace-8af45-default-rtdb.firebaseio.com"
 });
 
 // Change db to rtdb for Realtime Database
