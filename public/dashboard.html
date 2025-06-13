@@ -320,18 +320,18 @@
                                 <span>${chatbot.files ? chatbot.files.length : 0} documents</span>
                             </div>
                             <div class="flex space-x-2">
-                                <button onclick="editChatbot('${chatbot.id}')" class="px-3 py-1 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600">
-                                    <i class="fas fa-edit mr-1"></i>Edit
+                                <button onclick="editChatbot('${chatbot.id}')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">
+                                    <i class="fas fa-edit"></i> Edit
                                 </button>
-                                <button onclick="deleteChatbot('${chatbot.id}')" class="px-3 py-1 bg-red-500 text-white rounded-md text-sm hover:bg-red-600">
-                                    <i class="fas fa-trash-alt mr-1"></i>Delete
+                                <button onclick="deleteChatbot('${chatbot.id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
+                                    <i class="fas fa-trash"></i> Delete
                                 </button>
-                                <button onclick="generateFiles('${chatbot.id}', event)" class="px-3 py-1 bg-green-500 text-white rounded-md text-sm hover:bg-green-600">
-                                    <i class="fas fa-cogs mr-1"></i>Generate Files
+                                <button onclick="downloadChatbot('${chatbot.id}', event)" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded">
+                                    <i class="fas fa-download"></i> Download
                                 </button>
-                                <a href="#" class="px-3 py-1 bg-gray-300 text-gray-800 rounded-md text-sm hover:bg-gray-400">
-                                    <i class="fas fa-eye mr-1"></i>View
-                                </a>
+                                <button onclick="viewChatbot('${chatbot.id}')" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
                             </div>
                         `;
                         chatbotsList.appendChild(chatbotElement);
@@ -556,95 +556,44 @@
             }
         }
 
-        // Function to logout
-        function logout() {
-            firebase.auth().signOut().then(() => {
-                window.location.href = 'login.html';
-            }).catch((error) => {
-                console.error('Error signing out:', error);
-            });
-        }
-
-        // Add server configuration
-        const FILE_SERVER_URL = 'http://localhost:3000'; // Change this to your file generation server URL
-
-        // Test server connection
-        async function testServerConnection() {
+        // Function to download chatbot files
+        async function downloadChatbot(chatbotId, event) {
             try {
-                const response = await fetch(`${FILE_SERVER_URL}/api/test`);
-                if (!response.ok) {
-                    throw new Error(`Server returned ${response.status}`);
-                }
-                const data = await response.json();
-                console.log('Server test response:', data);
-                return true;
-            } catch (error) {
-                console.error('Server connection test failed:', error);
-                return false;
-            }
-        }
-
-        // Generate files function
-        async function generateFiles(chatbotId, event) {
-            const button = event.target.closest('button');
-            const originalText = button.innerHTML;
-            
-            try {
-                // Test server connection first
-                const isServerConnected = await testServerConnection();
-                if (!isServerConnected) {
-                    throw new Error('Cannot connect to file generation server. Please try again later.');
+                const user = firebase.auth().currentUser;
+                if (!user) {
+                    alert('You must be logged in to download files.');
+                    return;
                 }
 
-                // Show loading state
-                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+                const button = event.target.closest('button');
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
                 button.disabled = true;
 
-                console.log('Generating files for chatbot:', chatbotId);
+                // Create download URL with userId
+                const downloadUrl = `/api/download-chatbot/${chatbotId}?userId=${user.uid}`;
+                
+                // Create a temporary link to download the files
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = `chatbot-${chatbotId}.zip`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
 
-                // Call the backend API
-                const response = await fetch(`${FILE_SERVER_URL}/api/generate-chatbot/${chatbotId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                console.log('Response status:', response.status);
-                const responseText = await response.text();
-                console.log('Response text:', responseText);
-
-                if (!response.ok) {
-                    throw new Error(`Server error: ${response.status} - ${responseText}`);
-                }
-
-                const result = JSON.parse(responseText);
-                console.log('Generation result:', result);
-
-                if (result.success) {
-                    // Create a temporary link to download the files
-                    const link = document.createElement('a');
-                    link.href = `${FILE_SERVER_URL}/api/download/${chatbotId}`;
-                    link.download = `chatbot-${chatbotId}.zip`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-
-                    // Show success message
-                    showNotification('Files generated successfully!', 'success');
-                } else {
-                    throw new Error(result.error || 'Failed to generate files');
-                }
+                showNotification('Files downloaded successfully!', 'success');
             } catch (error) {
-                console.error('Error generating files:', error);
+                console.error('Error downloading chatbot files:', error);
                 showNotification(error.message, 'error');
             } finally {
                 // Reset button state
+                const button = event.target.closest('button');
                 button.innerHTML = originalText;
                 button.disabled = false;
             }
         }
 
+        // Function to show notifications
         function showNotification(message, type = 'success') {
             const notification = document.createElement('div');
             notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg ${
@@ -655,6 +604,78 @@
             setTimeout(() => {
                 notification.remove();
             }, 3000);
+        }
+
+        // Function to view a chatbot
+        async function viewChatbot(chatbotId) {
+            try {
+                const user = firebase.auth().currentUser;
+                if (!user) {
+                    alert('You must be logged in to view chatbot details.');
+                    return;
+                }
+
+                const button = event.target.closest('button');
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+                button.disabled = true;
+
+                // Fetch chatbot data
+                const snapshot = await firebase.database().ref(`users/${user.uid}/chatbots/${chatbotId}`).once('value');
+                const chatbot = snapshot.val();
+                
+                if (chatbot) {
+                    // Show chatbot details
+                    const chatbotDetails = document.createElement('div');
+                    chatbotDetails.className = 'fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50';
+                    chatbotDetails.innerHTML = `
+                        <div class="bg-white rounded-lg p-6 shadow-lg max-w-lg w-full">
+                            <h2 class="text-2xl font-bold mb-4 text-gray-800">${chatbot.purpose}</h2>
+                            <p class="mb-2"><strong class="text-gray-700">Template:</strong> ${chatbot.template}</p>
+                            <p class="mb-2"><strong class="text-gray-700">API Provider:</strong> ${chatbot.modelDetails ? chatbot.modelDetails.provider : 'N/A'}</p>
+                            <p class="mb-2"><strong class="text-gray-700">Model:</strong> ${chatbot.modelDetails ? chatbot.modelDetails.name : 'N/A'}</p>
+                            <p class="mb-2"><strong class="text-gray-700">API Key:</strong> ${chatbot.apiKey}</p>
+                            <p class="mb-2"><strong class="text-gray-700">Document Type:</strong> ${chatbot.documentType}</p>
+                            <p class="mb-2"><strong class="text-gray-700">Document Content:</strong></p>
+                            <pre class="bg-gray-100 p-3 rounded-md text-sm text-gray-700 whitespace-pre-wrap break-words mb-4">${chatbot.documentContent || 'No content available'}</pre>
+                            <div class="mt-4 text-right">
+                                <button onclick="closeChatbotDetails()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition duration-300">
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(chatbotDetails);
+                } else {
+                    console.error('Chatbot data not found');
+                    alert('Error loading chatbot details. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error loading chatbot details:', error);
+                alert('Error loading chatbot details. Please try again.');
+            } finally {
+                // Reset button state
+                const button = event.target.closest('button');
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+
+        // Function to close chatbot details
+        function closeChatbotDetails() {
+            const chatbotDetails = document.querySelector('.fixed.inset-0.bg-gray-800.bg-opacity-75');
+            if (chatbotDetails) {
+                chatbotDetails.remove();
+            }
+        }
+
+        // Function to logout
+        function logout() {
+            firebase.auth().signOut().then(() => {
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error('Error signing out:', error);
+            });
         }
     </script>
 </body>

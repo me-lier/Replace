@@ -319,160 +319,186 @@
             <div class="max-w-4xl mx-auto">
                 <h2 class="text-2xl font-bold mb-6">Choose a Template</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Minimal Template -->
-                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="minimal">
-                        <div class="relative">
-                            <img src="templates/minimal/preview.png" alt="Minimal Template" class="w-full h-48 object-cover rounded-lg mb-4">
-                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="minimal">
-                                <i class="fas fa-eye text-gray-600"></i>
-                </button>
-                        </div>
-                        <h3 class="font-semibold mb-2">Minimal</h3>
-                        <p class="text-sm text-gray-600">A clean and simple design for focused conversations.</p>
-            </div>
-
-                    <!-- Professional Template -->
-                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="professional">
-                        <div class="relative">
-                            <img src="templates/professional/preview.png" alt="Professional Template" class="w-full h-48 object-cover rounded-lg mb-4">
-                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="professional">
-                                <i class="fas fa-eye text-gray-600"></i>
-                            </button>
-                </div>
-                        <h3 class="font-semibold mb-2">Professional</h3>
-                        <p class="text-sm text-gray-600">A polished design for business and corporate use.</p>
-            </div>
-
-                    <!-- Creative Template -->
-                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="creative">
-                        <div class="relative">
-                            <img src="templates/creative/preview.png" alt="Creative Template" class="w-full h-48 object-cover rounded-lg mb-4">
-                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="creative">
-                                <i class="fas fa-eye text-gray-600"></i>
-                            </button>
-                        </div>
-                        <h3 class="font-semibold mb-2">Creative</h3>
-                        <p class="text-sm text-gray-600">A vibrant design for engaging user interactions.</p>
-                        </div>
-
-                    <!-- Legal Template -->
-                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="legal">
-                        <div class="relative">
-                            <img src="templates/legal/preview.png" alt="Legal Template" class="w-full h-48 object-cover rounded-lg mb-4">
-                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="legal">
-                                <i class="fas fa-eye text-gray-600"></i>
-                        </button>
-                    </div>
-                        <h3 class="font-semibold mb-2">Legal</h3>
-                        <p class="text-sm text-gray-600">Professional design for legal consultations and services.</p>
-            </div>
-
-                    <!-- Tech Template -->
-                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="tech">
-                    <div class="relative">
-                            <img src="templates/tech/preview.png" alt="Tech Template" class="w-full h-48 object-cover rounded-lg mb-4">
-                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="tech">
-                                <i class="fas fa-eye text-gray-600"></i>
-                            </button>
-                        </div>
-                        <h3 class="font-semibold mb-2">Tech</h3>
-                        <p class="text-sm text-gray-600">Modern design for technology and IT support.</p>
-                    </div>
-
-                    <!-- Fitness Template -->
-                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="fitness">
-                        <div class="relative">
-                            <img src="templates/fitness/preview.png" alt="Fitness Template" class="w-full h-48 object-cover rounded-lg mb-4">
-                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="fitness">
-                                <i class="fas fa-eye text-gray-600"></i>
-                            </button>
-                        </div>
-                        <h3 class="font-semibold mb-2">Fitness</h3>
-                        <p class="text-sm text-gray-600">Energetic design for fitness and wellness coaching.</p>
-                </div>
-
-                    <!-- Food Template -->
-                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="food">
-                    <div class="relative">
-                            <img src="templates/food/preview.png" alt="Food Template" class="w-full h-48 object-cover rounded-lg mb-4">
-                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="food">
-                                <i class="fas fa-eye text-gray-600"></i>
-                            </button>
-                        </div>
-                        <h3 class="font-semibold mb-2">Food</h3>
-                        <p class="text-sm text-gray-600">Appetizing design for restaurants and food services.</p>
-                    </div>
-
-                    <!-- Real Estate Template -->
-                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="realestate">
-                        <div class="relative">
-                            <img src="templates/realestate/preview.png" alt="Real Estate Template" class="w-full h-48 object-cover rounded-lg mb-4">
-                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="realestate">
-                                <i class="fas fa-eye text-gray-600"></i>
-                            </button>
+                    <!-- E-commerce Template Card -->
+                    <div class="template-card p-6 rounded-lg shadow-md cursor-pointer relative overflow-hidden group" data-template-path="templates/ecommerce/index.html">
+                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-75 rounded-lg"></div>
+                        <div class="relative z-10 text-white">
+                            <i class="fas fa-shopping-cart text-4xl mb-4"></i>
+                            <h3 class="text-xl font-bold mb-2">E-commerce Assistant</h3>
+                            <p class="text-sm opacity-90 mb-4">A sleek chatbot designed for online stores to assist with sales, support, and product inquiries.</p>
+                            <div class="flex items-center text-sm mb-4">
+                                <span class="text-yellow-400 mr-1">&#9733;&#9733;&#9733;&#9733;&#9734;</span> (4.5) <span class="ml-2">120 Reviews</span>
                             </div>
-                        <h3 class="font-semibold mb-2">Real Estate</h3>
-                        <p class="text-sm text-gray-600">Elegant design for property listings and consultations.</p>
+                            <button class="preview-btn mt-2 px-4 py-2 bg-white text-blue-600 rounded-full text-sm font-semibold hover:bg-gray-100 transition-all duration-300 transform translate-y-10 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 shadow-md" data-template-path="templates/ecommerce/index.html">Preview</button>
+                        </div>
                     </div>
 
-                    <!-- Finance Template -->
-                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="finance">
-                        <div class="relative">
-                            <img src="templates/finance/preview.png" alt="Finance Template" class="w-full h-48 object-cover rounded-lg mb-4">
-                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="finance">
-                                <i class="fas fa-eye text-gray-600"></i>
-                            </button>
-                        </div>
-                        <h3 class="font-semibold mb-2">Finance</h3>
-                        <p class="text-sm text-gray-600">Professional design for financial services and advice.</p>
-                    </div>
-
-                    <!-- Travel Template -->
-                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="travel">
-                        <div class="relative">
-                            <img src="templates/travel/preview.png" alt="Travel Template" class="w-full h-48 object-cover rounded-lg mb-4">
-                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="travel">
-                                <i class="fas fa-eye text-gray-600"></i>
-                            </button>
-                        </div>
-                        <h3 class="font-semibold mb-2">Travel</h3>
-                        <p class="text-sm text-gray-600">Adventure-ready design for travel planning and guides.</p>
-                </div>
-
-                    <!-- Education Template -->
-                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="education">
-                    <div class="relative">
-                            <img src="templates/education/preview.png" alt="Education Template" class="w-full h-48 object-cover rounded-lg mb-4">
-                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="education">
-                                <i class="fas fa-eye text-gray-600"></i>
-                            </button>
-                        </div>
-                        <h3 class="font-semibold mb-2">Education</h3>
-                        <p class="text-sm text-gray-600">Engaging design for learning and educational content.</p>
-                    </div>
-
-                    <!-- Healthcare Template -->
-                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="healthcare">
-                        <div class="relative">
-                            <img src="templates/healthcare/preview.png" alt="Healthcare Template" class="w-full h-48 object-cover rounded-lg mb-4">
-                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="healthcare">
-                                <i class="fas fa-eye text-gray-600"></i>
-                            </button>
+                    <!-- Professional Template Card -->
+                    <div class="template-card p-6 rounded-lg shadow-md cursor-pointer relative overflow-hidden group" data-template-path="templates/professional/index.html">
+                        <div class="absolute inset-0 bg-gradient-to-br from-green-500 to-teal-600 opacity-75 rounded-lg"></div>
+                        <div class="relative z-10 text-white">
+                            <i class="fas fa-briefcase text-4xl mb-4"></i>
+                            <h3 class="text-xl font-bold mb-2">Professional Business Bot</h3>
+                            <p class="text-sm opacity-90 mb-4">An elegant and efficient chatbot for corporate websites, providing info on services, FAQs, and contact forms.</p>
+                            <div class="flex items-center text-sm mb-4">
+                                <span class="text-yellow-400 mr-1">&#9733;&#9733;&#9733;&#9733;&#9733;</span> (5.0) <span class="ml-2">95 Reviews</span>
                             </div>
-                        <h3 class="font-semibold mb-2">Healthcare</h3>
-                        <p class="text-sm text-gray-600">Trustworthy design for medical consultations and care.</p>
+                            <button class="preview-btn mt-2 px-4 py-2 bg-white text-green-600 rounded-full text-sm font-semibold hover:bg-gray-100 transition-all duration-300 transform translate-y-10 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 shadow-md" data-template-path="templates/professional/index.html">Preview</button>
+                        </div>
                     </div>
 
-                    <!-- E-commerce Template -->
-                    <div class="template-card p-4 border rounded-lg cursor-pointer hover:border-blue-500 transition-all" data-template="ecommerce">
-                        <div class="relative">
-                            <img src="templates/ecommerce/preview.png" alt="E-commerce Template" class="w-full h-48 object-cover rounded-lg mb-4">
-                            <button class="preview-btn absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100" data-template="ecommerce">
-                                <i class="fas fa-eye text-gray-600"></i>
-                            </button>
+                    <!-- Minimal Template Card -->
+                    <div class="template-card p-6 rounded-lg shadow-md cursor-pointer relative overflow-hidden group" data-template-path="templates/minimal/index.html">
+                        <div class="absolute inset-0 bg-gradient-to-br from-gray-500 to-gray-700 opacity-75 rounded-lg"></div>
+                        <div class="relative z-10 text-white">
+                            <i class="fas fa-robot text-4xl mb-4"></i>
+                            <h3 class="text-xl font-bold mb-2">Minimalist Chatbot</h3>
+                            <p class="text-sm opacity-90 mb-4">A clean and simple design for quick integrations, focusing on core conversational functionality.</p>
+                            <div class="flex items-center text-sm mb-4">
+                                <span class="text-yellow-400 mr-1">&#9733;&#9733;&#9733;&#9733;&#9734;</span> (4.0) <span class="ml-2">200 Reviews</span>
+                            </div>
+                            <button class="preview-btn mt-2 px-4 py-2 bg-white text-gray-700 rounded-full text-sm font-semibold hover:bg-gray-100 transition-all duration-300 transform translate-y-10 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 shadow-md" data-template-path="templates/minimal/index.html">Preview</button>
                         </div>
-                        <h3 class="font-semibold mb-2">E-commerce</h3>
-                        <p class="text-sm text-gray-600">Shopping-focused design for online retail and services.</p>
+                    </div>
+
+                    <!-- Healthcare Template Card -->
+                    <div class="template-card p-6 rounded-lg shadow-md cursor-pointer relative overflow-hidden group" data-template-path="templates/healthcare/index.html">
+                        <div class="absolute inset-0 bg-gradient-to-br from-red-400 to-pink-500 opacity-75 rounded-lg"></div>
+                        <div class="relative z-10 text-white">
+                            <i class="fas fa-heartbeat text-4xl mb-4"></i>
+                            <h3 class="text-xl font-bold mb-2">Healthcare Assistant</h3>
+                            <p class="text-sm opacity-90 mb-4">A specialized template for health services, symptom checking, and appointment booking.</p>
+                            <div class="flex items-center text-sm mb-4">
+                                <span class="text-yellow-400 mr-1">&#9733;&#9733;&#9733;&#9733;&#9734;</span> (4.7) <span class="ml-2">85 Reviews</span>
+                            </div>
+                            <button class="preview-btn mt-2 px-4 py-2 bg-white text-pink-600 rounded-full text-sm font-semibold hover:bg-gray-100 transition-all duration-300 transform translate-y-10 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 shadow-md" data-template-path="templates/healthcare/index.html">Preview</button>
+                        </div>
+                    </div>
+
+                    <!-- Education Template Card -->
+                    <div class="template-card p-6 rounded-lg shadow-md cursor-pointer relative overflow-hidden group" data-template-path="templates/education/index.html">
+                        <div class="absolute inset-0 bg-gradient-to-br from-yellow-400 to-orange-500 opacity-75 rounded-lg"></div>
+                        <div class="relative z-10 text-white">
+                            <i class="fas fa-graduation-cap text-4xl mb-4"></i>
+                            <h3 class="text-xl font-bold mb-2">Education Guide</h3>
+                            <p class="text-sm opacity-90 mb-4">Ideal for educational platforms, helping students with course information, FAQs, and support.</p>
+                            <div class="flex items-center text-sm mb-4">
+                                <span class="text-yellow-400 mr-1">&#9733;&#9733;&#9733;&#9733;&#9734;</span> (4.3) <span class="ml-2">70 Reviews</span>
+                            </div>
+                            <button class="preview-btn mt-2 px-4 py-2 bg-white text-orange-600 rounded-full text-sm font-semibold hover:bg-gray-100 transition-all duration-300 transform translate-y-10 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 shadow-md" data-template-path="templates/education/index.html">Preview</button>
+                        </div>
+                    </div>
+
+                    <!-- Travel Template Card -->
+                    <div class="template-card p-6 rounded-lg shadow-md cursor-pointer relative overflow-hidden group" data-template-path="templates/travel/index.html">
+                        <div class="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-700 opacity-75 rounded-lg"></div>
+                        <div class="relative z-10 text-white">
+                            <i class="fas fa-plane text-4xl mb-4"></i>
+                            <h3 class="text-xl font-bold mb-2">Travel Planner</h3>
+                            <p class="text-sm opacity-90 mb-4">Assists users with travel bookings, destination information, and common travel inquiries.</p>
+                            <div class="flex items-center text-sm mb-4">
+                                <span class="text-yellow-400 mr-1">&#9733;&#9733;&#9733;&#9733;&#9733;</span> (4.9) <span class="ml-2">150 Reviews</span>
+                            </div>
+                            <button class="preview-btn mt-2 px-4 py-2 bg-white text-purple-600 rounded-full text-sm font-semibold hover:bg-gray-100 transition-all duration-300 transform translate-y-10 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 shadow-md" data-template-path="templates/travel/index.html">Preview</button>
+                        </div>
+                    </div>
+
+                    <!-- Finance Template Card -->
+                    <div class="template-card p-6 rounded-lg shadow-md cursor-pointer relative overflow-hidden group" data-template-path="templates/finance/index.html">
+                        <div class="absolute inset-0 bg-gradient-to-br from-teal-500 to-cyan-600 opacity-75 rounded-lg"></div>
+                        <div class="relative z-10 text-white">
+                            <i class="fas fa-dollar-sign text-4xl mb-4"></i>
+                            <h3 class="text-xl font-bold mb-2">Financial Advisor</h3>
+                            <p class="text-sm opacity-90 mb-4">Provides information on financial products, investment tips, and account assistance.</p>
+                            <div class="flex items-center text-sm mb-4">
+                                <span class="text-yellow-400 mr-1">&#9733;&#9733;&#9733;&#9733;&#9734;</span> (4.6) <span class="ml-2">110 Reviews</span>
+                            </div>
+                            <button class="preview-btn mt-2 px-4 py-2 bg-white text-cyan-600 rounded-full text-sm font-semibold hover:bg-gray-100 transition-all duration-300 transform translate-y-10 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 shadow-md" data-template-path="templates/finance/index.html">Preview</button>
+                        </div>
+                    </div>
+
+                    <!-- Real Estate Template Card -->
+                    <div class="template-card p-6 rounded-lg shadow-md cursor-pointer relative overflow-hidden group" data-template-path="templates/realestate/index.html">
+                        <div class="absolute inset-0 bg-gradient-to-br from-brown-500 to-amber-700 opacity-75 rounded-lg"></div>
+                        <div class="relative z-10 text-white">
+                            <i class="fas fa-home text-4xl mb-4"></i>
+                            <h3 class="text-xl font-bold mb-2">Real Estate Agent</h3>
+                            <p class="text-sm opacity-90 mb-4">Helps users find properties, schedule viewings, and answer real estate queries.</p>
+                            <div class="flex items-center text-sm mb-4">
+                                <span class="text-yellow-400 mr-1">&#9733;&#9733;&#9733;&#9733;&#9734;</span> (4.8) <span class="ml-2">90 Reviews</span>
+                            </div>
+                            <button class="preview-btn mt-2 px-4 py-2 bg-white text-amber-700 rounded-full text-sm font-semibold hover:bg-gray-100 transition-all duration-300 transform translate-y-10 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 shadow-md" data-template-path="templates/realestate/index.html">Preview</button>
+                        </div>
+                    </div>
+
+                    <!-- Food & Recipe Template Card -->
+                    <div class="template-card p-6 rounded-lg shadow-md cursor-pointer relative overflow-hidden group" data-template-path="templates/food/index.html">
+                        <div class="absolute inset-0 bg-gradient-to-br from-red-600 to-orange-600 opacity-75 rounded-lg"></div>
+                        <div class="relative z-10 text-white">
+                            <i class="fas fa-utensils text-4xl mb-4"></i>
+                            <h3 class="text-xl font-bold mb-2">Food & Recipe Bot</h3>
+                            <p class="text-sm opacity-90 mb-4">Offers recipe suggestions, cooking tips, and dietary information.</p>
+                            <div class="flex items-center text-sm mb-4">
+                                <span class="text-yellow-400 mr-1">&#9733;&#9733;&#9733;&#9733;&#9734;</span> (4.4) <span class="ml-2">60 Reviews</span>
+                            </div>
+                            <button class="preview-btn mt-2 px-4 py-2 bg-white text-orange-700 rounded-full text-sm font-semibold hover:bg-gray-100 transition-all duration-300 transform translate-y-10 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 shadow-md" data-template-path="templates/food/index.html">Preview</button>
+                        </div>
+                    </div>
+
+                    <!-- Fitness Template Card -->
+                    <div class="template-card p-6 rounded-lg shadow-md cursor-pointer relative overflow-hidden group" data-template-path="templates/fitness/index.html">
+                        <div class="absolute inset-0 bg-gradient-to-br from-lime-500 to-green-600 opacity-75 rounded-lg"></div>
+                        <div class="relative z-10 text-white">
+                            <i class="fas fa-dumbbell text-4xl mb-4"></i>
+                            <h3 class="text-xl font-bold mb-2">Fitness Coach</h3>
+                            <p class="text-sm opacity-90 mb-4">Provides workout plans, nutrition advice, and tracks fitness progress.</p>
+                            <div class="flex items-center text-sm mb-4">
+                                <span class="text-yellow-400 mr-1">&#9733;&#9733;&#9733;&#9733;&#9733;</span> (4.9) <span class="ml-2">130 Reviews</span>
+                            </div>
+                            <button class="preview-btn mt-2 px-4 py-2 bg-white text-green-700 rounded-full text-sm font-semibold hover:bg-gray-100 transition-all duration-300 transform translate-y-10 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 shadow-md" data-template-path="templates/fitness/index.html">Preview</button>
+                        </div>
+                    </div>
+
+                    <!-- Tech Support Template Card -->
+                    <div class="template-card p-6 rounded-lg shadow-md cursor-pointer relative overflow-hidden group" data-template-path="templates/tech/index.html">
+                        <div class="absolute inset-0 bg-gradient-to-br from-blue-700 to-indigo-800 opacity-75 rounded-lg"></div>
+                        <div class="relative z-10 text-white">
+                            <i class="fas fa-tools text-4xl mb-4"></i>
+                            <h3 class="text-xl font-bold mb-2">Tech Support Assistant</h3>
+                            <p class="text-sm opacity-90 mb-4">Automates common tech support queries and guides users to solutions.</p>
+                            <div class="flex items-center text-sm mb-4">
+                                <span class="text-yellow-400 mr-1">&#9733;&#9733;&#9733;&#9733;&#9734;</span> (4.5) <span class="ml-2">100 Reviews</span>
+                            </div>
+                            <button class="preview-btn mt-2 px-4 py-2 bg-white text-indigo-800 rounded-full text-sm font-semibold hover:bg-gray-100 transition-all duration-300 transform translate-y-10 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 shadow-md" data-template-path="templates/tech/index.html">Preview</button>
+                        </div>
+                    </div>
+
+                    <!-- Legal Template Card -->
+                    <div class="template-card p-6 rounded-lg shadow-md cursor-pointer relative overflow-hidden group" data-template-path="templates/legal/index.html">
+                        <div class="absolute inset-0 bg-gradient-to-br from-purple-700 to-fuchsia-800 opacity-75 rounded-lg"></div>
+                        <div class="relative z-10 text-white">
+                            <i class="fas fa-gavel text-4xl mb-4"></i>
+                            <h3 class="text-xl font-bold mb-2">Legal Assistant</h3>
+                            <p class="text-sm opacity-90 mb-4">Offers basic legal information and directs users to relevant resources.</p>
+                            <div class="flex items-center text-sm mb-4">
+                                <span class="text-yellow-400 mr-1">&#9733;&#9733;&#9733;&#9733;&#9734;</span> (4.2) <span class="ml-2">55 Reviews</span>
+                            </div>
+                            <button class="preview-btn mt-2 px-4 py-2 bg-white text-fuchsia-800 rounded-full text-sm font-semibold hover:bg-gray-100 transition-all duration-300 transform translate-y-10 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 shadow-md" data-template-path="templates/legal/index.html">Preview</button>
+                        </div>
+                    </div>
+
+                    <!-- Creative Studio Template Card -->
+                    <div class="template-card p-6 rounded-lg shadow-md cursor-pointer relative overflow-hidden group" data-template-path="templates/creative/index.html">
+                        <div class="absolute inset-0 bg-gradient-to-br from-pink-500 to-red-700 opacity-75 rounded-lg"></div>
+                        <div class="relative z-10 text-white">
+                            <i class="fas fa-palette text-4xl mb-4"></i>
+                            <h3 class="text-xl font-bold mb-2">Creative Studio Bot</h3>
+                            <p class="text-sm opacity-90 mb-4">Showcases creative portfolios, handles inquiries, and assists with project briefs.</p>
+                            <div class="flex items-center text-sm mb-4">
+                                <span class="text-yellow-400 mr-1">&#9733;&#9733;&#9733;&#9733;&#9733;</span> (4.7) <span class="ml-2">75 Reviews</span>
+                            </div>
+                            <button class="preview-btn mt-2 px-4 py-2 bg-white text-red-700 rounded-full text-sm font-semibold hover:bg-gray-100 transition-all duration-300 transform translate-y-10 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 shadow-md" data-template-path="templates/creative/index.html">Preview</button>
+                        </div>
                     </div>
                 </div>
 
@@ -484,20 +510,25 @@
                     <button id="nextToApi" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
                         Next<i class="fas fa-arrow-right ml-2"></i>
                     </button>
-            </div>
+                </div>
             </div>
         </section>
 
-            <!-- Preview Modal -->
-            <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-            <div class="bg-white rounded-lg p-6 max-w-4xl w-full mx-4">
+        <!-- Preview Modal -->
+        <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-6 max-w-6xl w-full h-5/6 mx-4 flex flex-col">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xl font-semibold">Template Preview</h3>
+                    <div class="flex space-x-2">
+                        <button id="openExternal" class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
+                            <i class="fas fa-external-link-alt mr-2"></i>Open in New Tab
+                        </button>
                         <button id="closePreview" class="text-gray-500 hover:text-gray-700">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
-                <div class="aspect-w-16 aspect-h-9">
+                </div>
+                <div class="flex-grow aspect-w-16 aspect-h-9">
                     <iframe id="previewFrame" src="" class="w-full h-full rounded-lg"></iframe>
                 </div>
             </div>
@@ -519,11 +550,11 @@
                     <h3 class="font-semibold mb-2">Google AI Studio</h3>
                     <p class="text-sm text-gray-600">Leverage Google's advanced AI capabilities.</p>
                 </div>
-                <!-- LLAMA Option -->
+                <!-- LLAMA (Local/Custom) Option -->
                 <div class="model-option p-6 border rounded-lg cursor-pointer text-center" data-form="llama-form" data-model="llama">
-                    <img src="https://miro.medium.com/v2/resize:fit:1024/1*tM6_a-S_6e4R5eM_a-S_6e4R5eM.png" alt="LLAMA" class="model-logo mx-auto mb-4 w-16 h-16">
-                    <h3 class="font-semibold mb-2">LLAMA</h3>
-                    <p class="text-sm text-gray-600">Use Meta's open-source LLAMA model.</p>
+                    <img src="https://llama.meta.com/static/llama-logo-1-0-2-e568f69b5e3a7c66952136e053a479ff.svg" alt="LLAMA Logo" class="model-logo mx-auto mb-4 w-16 h-16">
+                    <h3 class="font-semibold mb-2">LLAMA (Local/Custom)</h3>
+                    <p class="text-sm text-gray-600">Integrate with local or custom LLAMA models.</p>
                 </div>
             </div>
 
@@ -673,6 +704,7 @@
         const previewModal = document.getElementById('previewModal');
         const previewFrame = document.getElementById('previewFrame');
         const closePreview = document.getElementById('closePreview');
+        const openExternal = document.getElementById('openExternal');
 
         const modelOptions = document.querySelectorAll('.model-option');
         const apiForms = document.querySelectorAll('.api-form');
@@ -756,7 +788,7 @@
                 this.classList.add('selected', 'border-blue-500', 'ring-2', 'ring-blue-500');
 
                 // Store the selected template
-                localStorage.setItem('selectedTemplate', this.getAttribute('data-template'));
+                localStorage.setItem('selectedTemplate', this.dataset.templatePath);
 
                 // Enable Next button
                 nextToApi.disabled = false;
@@ -769,9 +801,10 @@
         previewButtons.forEach(button => {
             button.addEventListener('click', function(e) {
                 e.stopPropagation(); // Prevent card selection
-                const templatePath = this.dataset.template;
+                const templatePath = this.dataset.templatePath;
                 console.log('Loading template:', templatePath);
-                previewFrame.src = `templates/${templatePath}/index.html`;
+                previewFrame.src = templatePath;
+                openExternal.dataset.templatePath = templatePath;
                 previewModal.classList.remove('hidden');
                 previewModal.classList.add('flex');
             });
@@ -781,6 +814,17 @@
             previewModal.classList.add('hidden');
             previewModal.classList.remove('flex');
             previewFrame.src = '';
+            openExternal.dataset.templatePath = '';
+        });
+
+        // New: Open in New Tab functionality
+        openExternal.addEventListener('click', function() {
+            const templatePath = this.dataset.templatePath;
+            if (templatePath) {
+                window.open(templatePath, '_blank');
+            } else {
+                alert('No template selected for external preview.');
+            }
         });
 
         // Navigation Handlers
@@ -849,6 +893,7 @@
         });
 
         backToPurpose.addEventListener('click', function() {
+            console.log('Back to Purpose button clicked.');
             // Hide template section with fade out
             templateSection.style.opacity = '0';
             templateSection.style.transition = 'opacity 0.3s ease-out';
@@ -875,28 +920,22 @@
         });
 
         backToWelcome.addEventListener('click', function() {
-            window.location.href = 'welcome.html';
+            console.log('Back to Welcome/Dashboard button clicked.');
+            window.location.href = 'dashboard.html';
         });
 
         // API Section Handlers
         modelOptions.forEach(option => {
             option.addEventListener('click', function() {
-                modelOptions.forEach(opt => {
-                    opt.classList.remove('selected', 'ring-2', 'ring-blue-500', 'border-blue-500');
-                });
-                
-                this.classList.add('selected', 'ring-2', 'ring-blue-500', 'border-blue-500');
+                modelOptions.forEach(mo => mo.classList.remove('selected'));
+                this.classList.add('selected');
                 
                 const formId = this.dataset.form;
-                const modelType = this.dataset.model; // Get the model type (openai, google-ai, llama)
-                
-                apiForms.forEach(form => {
-                    form.classList.add('hidden');
-                });
+                apiForms.forEach(form => form.classList.add('hidden'));
                 document.getElementById(formId).classList.remove('hidden');
                 
                 // Store the selected model type
-                localStorage.setItem('selectedModelType', modelType);
+                localStorage.setItem('selectedModelType', this.dataset.model);
                 
                 nextToDocument.disabled = false;
                 nextToDocument.classList.remove('opacity-50', 'cursor-not-allowed');
@@ -965,17 +1004,21 @@
 
         function addFileToList(file) {
             const fileItem = document.createElement('div');
-            fileItem.className = 'flex items-center justify-between p-2 bg-gray-50 rounded-md';
+            fileItem.className = 'file-item flex items-center justify-between p-3 mb-2 bg-gray-100 rounded-lg shadow-sm';
             fileItem.innerHTML = `
-                <div class="flex items-center">
-                    <i class="fas fa-file text-gray-400 mr-2"></i>
-                    <span class="text-sm text-gray-700">${file.name}</span>
-                </div>
-                <button class="text-red-500 hover:text-red-700" onclick="this.parentElement.remove()">
-                    <i class="fas fa-times"></i>
+                <span class="text-gray-700 text-sm flex items-center">
+                    <i class="fas fa-file-alt mr-2"></i>
+                    ${file.name} (<span class="text-xs text-gray-500">${(file.size / 1024 / 1024).toFixed(2)} MB</span>)
+                </span>
+                <button type="button" class="remove-file text-red-500 hover:text-red-700 ml-3">
+                    <i class="fas fa-times-circle"></i>
                 </button>
             `;
             uploadedFiles.appendChild(fileItem);
+
+            fileItem.querySelector('.remove-file').addEventListener('click', function() {
+                fileItem.remove();
+            });
         }
 
         // Navigation Handlers
@@ -1012,6 +1055,8 @@
         });
 
         backToApi.addEventListener('click', function() {
+            console.log('Back to API button clicked');
+            
             // Hide document section with fade out
             documentSection.style.opacity = '0';
             documentSection.style.transition = 'opacity 0.3s ease-out';
@@ -1028,9 +1073,9 @@
                 // Force a reflow
                 apiSection.offsetHeight;
                 
-            setTimeout(() => {
+                setTimeout(() => {
                     apiSection.style.opacity = '1';
-            }, 50);
+                }, 50);
                 
                 // Scroll to top
                 window.scrollTo(0, 0);
@@ -1204,6 +1249,34 @@
                 throw error;
             }
         }
+
+        backToTemplate.addEventListener('click', function() {
+            console.log('Back to Template button clicked');
+            
+            // Hide API section with fade out
+            apiSection.style.opacity = '0';
+            apiSection.style.transition = 'opacity 0.3s ease-out';
+            
+            setTimeout(() => {
+                apiSection.classList.add('hidden');
+                apiSection.style.opacity = '1'; // Reset opacity for when we come back
+                
+                // Show template section with fade in
+                templateSection.classList.remove('hidden');
+                templateSection.style.opacity = '0';
+                templateSection.style.transition = 'opacity 0.3s ease-in';
+                
+                // Force a reflow
+                templateSection.offsetHeight;
+                
+                setTimeout(() => {
+                    templateSection.style.opacity = '1';
+                }, 50);
+                
+                // Scroll to top
+                window.scrollTo(0, 0);
+            }, 300);
+        });
     </script>
 
     <!-- Firebase SDK -->

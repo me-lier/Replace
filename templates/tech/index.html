@@ -4,181 +4,146 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tech Support Assistant</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .chat-container {
-            height: calc(100vh - 180px);
-        }
-        .message {
-            max-width: 80%;
-            margin-bottom: 1rem;
-            padding: 1rem;
-            border-radius: 1rem;
-        }
-        .user-message {
-            background-color: #E3F2FD;
-            margin-left: auto;
-            border-bottom-right-radius: 0.25rem;
-        }
-        .bot-message {
-            background-color: #F5F5F5;
-            margin-right: auto;
-            border-bottom-left-radius: 0.25rem;
-        }
-        .typing-indicator {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #ccc;
-            border-radius: 50%;
-            border-top-color: #333;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-    </style>
+    <link href="chat.css" rel="stylesheet">
 </head>
-<body class="bg-gray-50">
-    <div class="min-h-screen flex flex-col">
-        <!-- Header -->
-        <header class="bg-white shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
-                <div class="flex items-center">
-                    <i class="fas fa-headset text-blue-600 text-2xl mr-3"></i>
-                    <h1 class="text-xl font-semibold text-gray-900">Tech Support Assistant</h1>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <button class="text-gray-500 hover:text-gray-700">
-                        <i class="fas fa-history"></i>
-                    </button>
-                    <button class="text-gray-500 hover:text-gray-700">
-                        <i class="fas fa-cog"></i>
-                    </button>
-                </div>
-            </div>
-        </header>
-
-        <!-- Main Chat Area -->
-        <main class="flex-1 overflow-hidden">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="chat-container overflow-y-auto p-4">
-                    <!-- Welcome Message -->
-                    <div class="message bot-message">
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-robot text-blue-600 text-xl"></i>
-                            </div>
-                            <div class="ml-3">
-                                <p class="text-sm font-medium text-gray-900">Tech Support Assistant</p>
-                                <p class="text-sm text-gray-700">Hello! I'm your technical support assistant. I can help you with:</p>
-                                <ul class="list-disc list-inside text-sm text-gray-700 mt-2">
-                                    <li>Software troubleshooting</li>
-                                    <li>Hardware issues</li>
-                                    <li>Network problems</li>
-                                    <li>Account support</li>
-                                    <li>Product guidance</li>
-                                </ul>
-                                <p class="text-sm text-gray-700 mt-2">What technical issue can I help you with today?</p>
-                            </div>
+<body>
+    <div class="main-container">
+        <div class="container h-100 py-3">
+            <div class="row h-100">
+                <div class="col-12 h-100 d-flex flex-column">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center">
+                            <img src="https://via.placeholder.com/40" alt="Logo" class="me-2">
+                            <h5 class="mb-0">Tech Support</h5>
+                        </div>
+                        <div>
+                            <button class="btn btn-outline-secondary me-2">
+                                <i class="fas fa-history"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fas fa-cog"></i>
+                            </button>
                         </div>
                     </div>
-                </div>
-            </div>
-        </main>
 
-        <!-- Input Area -->
-        <div class="bg-white border-t">
-            <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
-                <div class="flex space-x-4">
-                    <div class="flex-1">
-                        <input type="text" 
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
-                               placeholder="Describe your technical issue...">
+                    <!-- Chat Messages Area -->
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- Messages will be added here dynamically -->
                     </div>
-                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
-                <!-- Quick Actions -->
-                <div class="mt-4 flex space-x-2 overflow-x-auto">
-                    <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200">
-                        <i class="fas fa-laptop mr-1"></i>Hardware
-                    </button>
-                    <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200">
-                        <i class="fas fa-code mr-1"></i>Software
-                    </button>
-                    <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200">
-                        <i class="fas fa-wifi mr-1"></i>Network
-                    </button>
-                    <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200">
-                        <i class="fas fa-user-circle mr-1"></i>Account
-                    </button>
-                    <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200">
-                        <i class="fas fa-question-circle mr-1"></i>FAQ
-                    </button>
+
+                    <!-- Chat Input Area -->
+                    <div class="chat-input-container">
+                        <div class="input-group">
+                            <textarea id="userInput" class="form-control" placeholder="Type your message..." rows="1"></textarea>
+                            <button class="send-btn" onclick="sendMessage()">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="input-features">
+                            <span><i class="fas fa-microphone"></i></span>
+                            <span><i class="fas fa-paperclip"></i></span>
+                            <span><i class="fas fa-smile"></i></span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const input = document.querySelector('input');
-            const sendButton = document.querySelector('button');
-            const chatContainer = document.querySelector('.chat-container');
+        function addMessage(message, isUser = false) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
+            
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas ${isUser ? 'fa-user' : 'fa-robot'}"></i>
+                </div>
+                <div class="message-content">
+                    <div class="message-bubble">${message}</div>
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
 
-            function addMessage(message, isUser = false) {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
-                
-                const content = `
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0">
-                            <i class="fas ${isUser ? 'fa-user' : 'fa-robot'} ${isUser ? 'text-gray-500' : 'text-blue-600'} text-xl"></i>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-gray-900">${isUser ? 'You' : 'Tech Support Assistant'}</p>
-                            <p class="text-sm text-gray-700">${message}</p>
+        function showTypingIndicator() {
+            const chatMessages = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message ai-message typing-indicator-container';
+            typingDiv.id = 'typingIndicator';
+            
+            typingDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content">
+                    <div class="message-bubble">
+                        <div class="typing-indicator">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
                         </div>
                     </div>
-                `;
+                </div>
+            `;
+            
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const message = userInput.value.trim();
+            
+            if (message) {
+                addMessage(message, true);
+                userInput.value = '';
                 
-                messageDiv.innerHTML = content;
-                chatContainer.appendChild(messageDiv);
-                chatContainer.scrollTop = chatContainer.scrollHeight;
+                // Show typing indicator
+                showTypingIndicator();
+                
+                // Simulate AI response after a delay
+                setTimeout(() => {
+                    removeTypingIndicator();
+                    addMessage("I'm here to help with your technical needs. How can I assist you today?");
+                }, 1500);
             }
+        }
 
-            function handleUserInput() {
-                const message = input.value.trim();
-                if (message) {
-                    addMessage(message, true);
-                    input.value = '';
-                    
-                    // Simulate bot response
-                    setTimeout(() => {
-                        addMessage("Let me help you troubleshoot this issue. First, let's try these steps...");
-                    }, 1000);
-                }
+        // Handle Enter key to send message
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
             }
-
-            sendButton.addEventListener('click', handleUserInput);
-            input.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    handleUserInput();
-                }
-            });
-
-            // Quick action buttons
-            document.querySelectorAll('.quick-action').forEach(button => {
-                button.addEventListener('click', () => {
-                    const action = button.textContent.trim();
-                    addMessage(action, true);
-                    // Handle quick action response
-                });
-            });
         });
+
+        // Auto-resize textarea
+        document.getElementById('userInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        // Add initial greeting
+        window.onload = function() {
+            addMessage("Hello! I'm your tech support assistant. How can I help you today?");
+        };
     </script>
 </body>
 </html> 

@@ -3,240 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Chatbot Template</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        .chat-container {
-            height: calc(100vh - 80px);
-        }
-        .message {
-            max-width: 80%;
-            margin-bottom: 1rem;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-        .user-message {
-            background-color: #1E40AF;
-            color: white;
-            margin-left: auto;
-        }
-        .bot-message {
-            background-color: white;
-            color: #1F2937;
-            margin-right: auto;
-            border: 1px solid #E5E7EB;
-        }
-        .typing-indicator {
-            display: flex;
-            gap: 0.5rem;
-            padding: 0.5rem;
-        }
-        .typing-dot {
-            width: 0.5rem;
-            height: 0.5rem;
-            background-color: #9CA3AF;
-            border-radius: 50%;
-            animation: typing 1s infinite ease-in-out;
-        }
-        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes typing {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-0.5rem); }
-        }
-        .quick-replies {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-top: 1rem;
-        }
-        .quick-reply {
-            background-color: #F3F4F6;
-            border: 1px solid #E5E7EB;
-            padding: 0.5rem 1rem;
-            border-radius: 1rem;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .quick-reply:hover {
-            background-color: #E5E7EB;
-        }
-    </style>
+    <title>Professional Business Chatbot</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="chat.css" rel="stylesheet">
 </head>
-<body class="bg-gray-50">
-    <div class="flex flex-col h-screen">
-        <!-- Header -->
-        <header class="bg-white border-b p-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-full bg-blue-900 flex items-center justify-center">
-                        <i class="fas fa-headset text-white"></i>
+<body>
+    <div class="main-container">
+        <div class="container h-100 py-3">
+            <div class="row h-100">
+                <div class="col-12 h-100 d-flex flex-column">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center">
+                            <img src="https://via.placeholder.com/40" alt="Logo" class="me-2">
+                            <h5 class="mb-0">Professional Assistant</h5>
+                        </div>
+                        <div>
+                            <button class="btn btn-outline-secondary me-2">
+                                <i class="fas fa-history"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div>
-                        <h1 class="text-lg font-semibold">Business Assistant</h1>
-                        <p class="text-sm text-gray-500">Available 24/7</p>
+
+                    <!-- Chat Messages Area -->
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- Messages will be added here dynamically -->
+                    </div>
+
+                    <!-- Chat Input Area -->
+                    <div class="chat-input-container">
+                        <div class="input-group">
+                            <textarea id="userInput" class="form-control" placeholder="Type your message..." rows="1"></textarea>
+                            <button class="send-btn" onclick="sendMessage()">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="input-features">
+                            <span><i class="fas fa-microphone"></i></span>
+                            <span><i class="fas fa-paperclip"></i></span>
+                            <span><i class="fas fa-smile"></i></span>
+                        </div>
                     </div>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <button class="text-gray-500 hover:text-gray-700">
-                        <i class="fas fa-phone"></i>
-                    </button>
-                    <button class="text-gray-500 hover:text-gray-700">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                </div>
-            </div>
-        </header>
-
-        <!-- Chat Container -->
-        <div class="chat-container overflow-y-auto p-4 space-y-4">
-            <!-- Welcome Message -->
-            <div class="message bot-message">
-                <p>Welcome to Business Assistant! How can I help you today?</p>
-                <div class="quick-replies">
-                    <button class="quick-reply">Schedule Meeting</button>
-                    <button class="quick-reply">Product Info</button>
-                    <button class="quick-reply">Support</button>
-                    <button class="quick-reply">Contact Sales</button>
-                </div>
-            </div>
-
-            <!-- Sample User Message -->
-            <div class="message user-message">
-                <p>I need information about your enterprise solutions.</p>
-            </div>
-
-            <!-- Sample Bot Response -->
-            <div class="message bot-message">
-                <p>I'd be happy to provide information about our enterprise solutions. We offer:</p>
-                <ul class="list-disc list-inside mt-2 space-y-1">
-                    <li>Custom Integration Services</li>
-                    <li>24/7 Technical Support</li>
-                    <li>Advanced Analytics</li>
-                    <li>Enterprise Security</li>
-                </ul>
-                <div class="quick-replies">
-                    <button class="quick-reply">Request Demo</button>
-                    <button class="quick-reply">Pricing</button>
-                    <button class="quick-reply">Case Studies</button>
-                </div>
-            </div>
-
-            <!-- Typing Indicator -->
-            <div class="message bot-message">
-                <div class="typing-indicator">
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Input Area -->
-        <div class="border-t p-4 bg-white">
-            <div class="flex items-center space-x-4">
-                <button class="text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-paperclip"></i>
-                </button>
-                <input type="text" 
-                       placeholder="Type your message..." 
-                       class="flex-1 border rounded-lg px-4 py-2 focus:outline-none focus:border-blue-900">
-                <button class="bg-blue-900 text-white rounded-lg px-4 py-2 hover:bg-blue-800">
-                    Send
-                </button>
             </div>
         </div>
     </div>
 
     <script>
-        // Add smooth scrolling to bottom
-        const chatContainer = document.querySelector('.chat-container');
-        chatContainer.scrollTop = chatContainer.scrollHeight;
+        function addMessage(message, isUser = false) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
+            
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas ${isUser ? 'fa-user' : 'fa-robot'}"></i>
+                </div>
+                <div class="message-content">
+                    <div class="message-bubble">${message}</div>
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
 
-        // Handle input
-        const input = document.querySelector('input');
-        const sendButton = document.querySelector('button:last-child');
-        const quickReplies = document.querySelectorAll('.quick-reply');
-
-        function sendMessage(message = null) {
-            const messageText = message || input.value.trim();
-            if (messageText) {
-                // Add user message
-                const userMessage = document.createElement('div');
-                userMessage.className = 'message user-message';
-                userMessage.innerHTML = `<p>${messageText}</p>`;
-                chatContainer.appendChild(userMessage);
-
-                // Clear input if not a quick reply
-                if (!message) {
-                    input.value = '';
-                }
-
-                // Show typing indicator
-                const typingIndicator = document.createElement('div');
-                typingIndicator.className = 'message bot-message';
-                typingIndicator.innerHTML = `
-                    <div class="typing-indicator">
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                    </div>
-                `;
-                chatContainer.appendChild(typingIndicator);
-
-                // Scroll to bottom
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-
-                // Simulate bot response
-                setTimeout(() => {
-                    // Remove typing indicator
-                    chatContainer.removeChild(typingIndicator);
-
-                    // Add bot response
-                    const botMessage = document.createElement('div');
-                    botMessage.className = 'message bot-message';
-                    botMessage.innerHTML = `
-                        <p>I understand you're interested in: "${messageText}"</p>
-                        <div class="quick-replies">
-                            <button class="quick-reply">Learn More</button>
-                            <button class="quick-reply">Contact Sales</button>
-                            <button class="quick-reply">Schedule Call</button>
+        function showTypingIndicator() {
+            const chatMessages = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message ai-message typing-indicator-container';
+            typingDiv.id = 'typingIndicator';
+            
+            typingDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content">
+                    <div class="message-bubble">
+                        <div class="typing-indicator">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
                         </div>
-                    `;
-                    chatContainer.appendChild(botMessage);
+                    </div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
 
-                    // Add event listeners to new quick replies
-                    botMessage.querySelectorAll('.quick-reply').forEach(button => {
-                        button.addEventListener('click', () => {
-                            sendMessage(button.textContent);
-                        });
-                    });
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
 
-                    // Scroll to bottom
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
+        function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const message = userInput.value.trim();
+            
+            if (message) {
+                addMessage(message, true);
+                userInput.value = '';
+                
+                // Show typing indicator
+                showTypingIndicator();
+                
+                // Simulate AI response after a delay
+                setTimeout(() => {
+                    removeTypingIndicator();
+                    addMessage("Thank you for your message. I'm here to help with your professional needs.");
                 }, 1500);
             }
         }
 
-        // Send message on button click
-        sendButton.addEventListener('click', () => sendMessage());
-
-        // Send message on Enter key
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
+        // Handle Enter key to send message
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
                 sendMessage();
             }
         });
 
-        // Handle quick replies
-        quickReplies.forEach(button => {
-            button.addEventListener('click', () => {
-                sendMessage(button.textContent);
-            });
+        // Auto-resize textarea
+        document.getElementById('userInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
         });
+
+        // Add initial greeting
+        window.onload = function() {
+            addMessage("Hello! I'm your professional business assistant. How can I help you today?");
+        };
     </script>
 </body>
 </html> 
