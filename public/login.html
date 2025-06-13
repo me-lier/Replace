@@ -123,9 +123,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-    <script type="module">
-        import { firebaseConfig } from './config.js';
-        
+    <script src="config.js"></script>
+    <script>
         // Initialize Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
@@ -165,36 +164,31 @@
             }
         });
 
-        // Handle signup form submission (assuming this is only for login.html and not signup.html content)
-        // This section seems to be a copy-paste error from signup.html. I will remove it if signup.html exists.
-        // If signup.html exists, this logic should only be in signup.html
-        const signupForm = document.getElementById('signupForm');
-        if (signupForm) {
-            signupForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
+        // Handle signup form submission
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const errorMessage = document.getElementById('signupErrorMessage');
+            
+            try {
+                // Create new user
+                const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
                 
-                const email = document.getElementById('signupEmail').value;
-                const password = document.getElementById('signupPassword').value;
-                const errorMessage = document.getElementById('signupErrorMessage');
+                // Store user info in localStorage
+                localStorage.setItem('userEmail', user.email);
+                localStorage.setItem('userId', user.uid);
                 
-                try {
-                    // Create new user
-                    const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
-                    const user = userCredential.user;
-                    
-                    // Store user info in localStorage
-                    localStorage.setItem('userEmail', user.email);
-                    localStorage.setItem('userId', user.uid);
-                    
-                    // Redirect to dashboard
-                    window.location.href = 'dashboard.html';
-                } catch (error) {
-                    console.error('Signup error:', error);
-                    errorMessage.textContent = error.message;
-                    errorMessage.classList.remove('hidden');
-                }
-            });
-        }
+                // Redirect to dashboard
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error('Signup error:', error);
+                errorMessage.textContent = error.message;
+                errorMessage.classList.remove('hidden');
+            }
+        });
 
         // Google Sign In
         const googleSignIn = document.getElementById('googleSignIn');
@@ -205,7 +199,6 @@
                 // Successful login
                 window.location.href = 'dashboard.html'; // Redirect to dashboard
             } catch (error) {
-                const errorMessage = document.getElementById('errorMessage'); // Assuming errorMessage for login
                 errorMessage.textContent = error.message;
                 errorMessage.classList.remove('hidden');
             }
@@ -216,7 +209,6 @@
         forgotPassword.addEventListener('click', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
-            const errorMessage = document.getElementById('errorMessage'); // Assuming errorMessage for login
             
             if (!email) {
                 errorMessage.textContent = 'Please enter your email address';
@@ -255,78 +247,6 @@
             emailTab.classList.add('text-gray-500');
             phoneForm.classList.remove('hidden');
             emailForm.classList.add('hidden');
-        });
-
-        // Phone number login with OTP (reCAPTCHA)
-        const sendOtpButton = document.getElementById('sendOtp');
-        const phoneNumberInput = document.getElementById('phoneNumber');
-        const otpInput = document.getElementById('otp');
-        const verifySignInButton = document.getElementById('phoneForm').querySelector('button[type="submit"]');
-        const phoneErrorMessage = document.getElementById('phoneErrorMessage');
-        let confirmationResult;
-
-        // Initialize reCAPTCHA container once the tab is visible
-        phoneTab.addEventListener('click', () => {
-            if (!document.getElementById('recaptcha-container')) {
-                const recaptchaDiv = document.createElement('div');
-                recaptchaDiv.id = 'recaptcha-container';
-                phoneForm.insertBefore(recaptchaDiv, phoneNumberInput.parentNode.nextSibling);
-                // reCAPTCHA is initialized when setupRecaptcha is called below.
-            }
-        });
-
-        sendOtpButton.addEventListener('click', async () => {
-            const phoneNumber = phoneNumberInput.value.trim();
-            if (!phoneNumber) {
-                phoneErrorMessage.textContent = 'Please enter a phone number';
-                phoneErrorMessage.classList.remove('hidden');
-                return;
-            }
-
-            try {
-                // Ensure reCAPTCHA verifier is set up before sending OTP
-                const recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-                    'size': 'invisible',
-                    'callback': (response) => {
-                        // reCAPTCHA solved, allow signInWithPhoneNumber.
-                        console.log('reCAPTCHA verified for phone login');
-                    }
-                });
-                
-                confirmationResult = await firebase.auth().signInWithPhoneNumber(phoneNumber, recaptchaVerifier);
-                phoneErrorMessage.textContent = 'OTP sent!';
-                phoneErrorMessage.classList.remove('hidden');
-                sendOtpButton.disabled = true;
-                recaptchaVerifier.render().then(function(widgetId) {grecaptcha.reset(widgetId);}); // Reset recaptcha to be ready for next attempt
-            } catch (error) {
-                console.error('Error sending OTP:', error);
-                phoneErrorMessage.textContent = error.message;
-                phoneErrorMessage.classList.remove('hidden');
-            }
-        });
-
-        verifySignInButton.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const otpCode = otpInput.value.trim();
-            if (!otpCode) {
-                phoneErrorMessage.textContent = 'Please enter the OTP';
-                phoneErrorMessage.classList.remove('hidden');
-                return;
-            }
-
-            try {
-                const userCredential = await confirmationResult.confirm(otpCode);
-                const user = userCredential.user;
-
-                localStorage.setItem('userEmail', user.email || 'phone_user');
-                localStorage.setItem('userId', user.uid);
-
-                window.location.href = 'dashboard.html';
-            } catch (error) {
-                console.error('Error verifying OTP:', error);
-                phoneErrorMessage.textContent = error.message;
-                phoneErrorMessage.classList.remove('hidden');
-            }
         });
     </script>
 </body>
