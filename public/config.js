@@ -1,9 +1,11 @@
-export const firebaseConfig = {
-  apiKey: process.env.VITE_FIREBASE_API_KEY,
-  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.VITE_FIREBASE_APP_ID,
-  measurementId: process.env.VITE_FIREBASE_MEASUREMENT_ID
-}; 
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyBHepnJbS30yYzZkR1ZyQ1yF1eVKOEDbZo",
+    authDomain: "replace-8af45.firebaseapp.com",
+    databaseURL: "https://replace-8af45-default-rtdb.firebaseio.com",
+    projectId: "replace-8af45",
+    storageBucket: "replace-8af45.firebasestorage.app",
+    messagingSenderId: "228567518315",
+    appId: "1:228567518315:web:9b620686bd70d5afb4f52e",
+    measurementId: "G-7K6W5KETK2"
+};
