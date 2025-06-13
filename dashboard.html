@@ -72,8 +72,11 @@
                 <a href="create-chatbot.html" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
                     <i class="fas fa-plus mr-2"></i>New Chatbot
                 </a>
-                <div class="relative">
-                    <img id="userAvatar" src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="Profile" class="w-10 h-10 rounded-full cursor-pointer">
+                <div class="flex items-center space-x-4">
+                    <img id="userAvatar" src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="Profile" class="w-10 h-10 rounded-full">
+                    <button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </button>
                 </div>
             </div>
         </div>
