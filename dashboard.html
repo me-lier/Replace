@@ -160,83 +160,168 @@
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script>
-        // Initialize Firebase and get user data
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if user is logged in
-            firebase.auth().onAuthStateChanged(function(user) {
-                if (user) {
-                    // Update user information
-                    document.getElementById('userName').textContent = user.displayName || user.email;
-                    document.getElementById('userAvatar').src = user.photoURL || 
-                        `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || user.email)}&background=6366f1&color=fff`;
-                    
-                    // Load user's chatbots
-                    loadUserChatbots(user.uid);
-                    // Load recent activity
-                    loadRecentActivity(user.uid);
-                } else {
-                    // Redirect to login if not authenticated
-                    window.location.href = 'login.html';
-                }
-            });
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBHepnJbS30yYzZkR1ZyQ1yF1eVKOEDbZo",
+            authDomain: "replace-8af45.firebaseapp.com",
+            databaseURL: "https://replace-8af45-default-rtdb.firebaseio.com",
+            projectId: "replace-8af45",
+            storageBucket: "replace-8af45.firebasestorage.app",
+            messagingSenderId: "228567518315",
+            appId: "1:228567518315:web:9b620686bd70d5afb4f52e",
+            measurementId: "G-7K6W5KETK2"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+
+        // Check authentication state and load chatbot data
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                // Update user information
+                document.getElementById('userName').textContent = user.displayName || user.email;
+                document.getElementById('userAvatar').src = user.photoURL || 
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || user.email)}&background=6366f1&color=fff`;
+                
+                // Load user's chatbot data
+                loadUserChatbots(user.uid);
+            }
         });
 
         // Function to load user's chatbots
-        function loadUserChatbots(userId) {
-            const db = firebase.firestore();
-            db.collection('chatbots')
-                .where('userId', '==', userId)
-                .get()
-                .then((querySnapshot) => {
-                    document.getElementById('totalChatbots').textContent = querySnapshot.size;
-                })
-                .catch((error) => {
-                    console.error("Error loading chatbots:", error);
-                });
-        }
+        async function loadUserChatbots(userId) {
+            try {
+                const snapshot = await firebase.database().ref(`users/${userId}/chatbots`).once('value');
+                const chatbots = snapshot.val();
 
-        // Function to load recent activity
-        function loadRecentActivity(userId) {
-            const db = firebase.firestore();
-            const activityContainer = document.getElementById('recentActivity');
-            
-            db.collection('activities')
-                .where('userId', '==', userId)
-                .orderBy('timestamp', 'desc')
-                .limit(3)
-                .get()
-                .then((querySnapshot) => {
-                    activityContainer.innerHTML = '';
-                    querySnapshot.forEach((doc) => {
-                        const activity = doc.data();
-                        const activityElement = createActivityElement(activity);
+                if (chatbots) {
+                    // Convert to array and sort by creation date
+                    const chatbotsArray = Object.entries(chatbots).map(([id, data]) => ({
+                        id,
+                        ...data
+                    })).sort((a, b) => b.createdAt - a.createdAt);
+
+                    // Update total chatbots count
+                    document.getElementById('totalChatbots').textContent = chatbotsArray.length;
+
+                    // Update recent activity
+                    const activityContainer = document.getElementById('recentActivity');
+                    activityContainer.innerHTML = ''; // Clear existing activities
+
+                    // Add all chatbot activities
+                    chatbotsArray.forEach(chatbot => {
+                        const activityElement = document.createElement('div');
+                        activityElement.className = 'flex items-center space-x-4 p-4 bg-gray-50 rounded-lg mb-4';
+                        activityElement.innerHTML = `
+                            <div class="text-green-600">
+                                <i class="fas fa-robot text-2xl"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold">${chatbot.purpose || 'Chatbot'} Created</p>
+                                <p class="text-gray-500 text-sm">${new Date(chatbot.createdAt).toLocaleDateString()}</p>
+                            </div>
+                        `;
                         activityContainer.appendChild(activityElement);
                     });
-                })
-                .catch((error) => {
-                    console.error("Error loading activities:", error);
-                });
+
+                    // Update quick actions with all chatbots
+                    const quickActions = document.querySelector('.grid-cols-3');
+                    if (quickActions) {
+                        quickActions.innerHTML = `
+                            <div class="dashboard-card bg-white p-6 rounded-lg shadow-lg">
+                                <h3 class="text-lg font-semibold mb-4">Your Chatbots (${chatbotsArray.length})</h3>
+                                <div class="space-y-4 max-h-60 overflow-y-auto">
+                                    ${chatbotsArray.map(chatbot => `
+                                        <div class="border-b pb-2">
+                                            <p class="text-gray-600"><strong>Purpose:</strong> ${chatbot.purpose || 'Not specified'}</p>
+                                            <p class="text-gray-600"><strong>Template:</strong> ${chatbot.template || 'Not specified'}</p>
+                                            <p class="text-gray-600"><strong>Documents:</strong> ${chatbot.files?.length || 0} files</p>
+                                            <p class="text-gray-500 text-sm">Created: ${new Date(chatbot.createdAt).toLocaleDateString()}</p>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <a href="create-chatbot.html" class="block w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 text-center mt-4">
+                                    Create New Chatbot
+                                </a>
+                            </div>
+                            <div class="dashboard-card bg-white p-6 rounded-lg shadow-lg">
+                                <h3 class="text-lg font-semibold mb-4">Manage Data</h3>
+                                <p class="text-gray-500 mb-4">Upload and manage your chatbot's knowledge base</p>
+                                <a href="#" class="block w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 text-center">
+                                    Manage Data
+                                </a>
+                            </div>
+                            <div class="dashboard-card bg-white p-6 rounded-lg shadow-lg">
+                                <h3 class="text-lg font-semibold mb-4">API Settings</h3>
+                                <p class="text-gray-500 mb-4">Configure your AI model integrations</p>
+                                <a href="#" class="block w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 text-center">
+                                    Configure
+                                </a>
+                            </div>
+                        `;
+                    }
+                } else {
+                    // No chatbots found
+                    document.getElementById('totalChatbots').textContent = '0';
+                    
+                    // Show no activity message
+                    const activityContainer = document.getElementById('recentActivity');
+                    activityContainer.innerHTML = `
+                        <div class="text-center py-8">
+                            <p class="text-gray-500">No recent activity</p>
+                        </div>
+                    `;
+
+                    // Show create chatbot card
+                    const quickActions = document.querySelector('.grid-cols-3');
+                    if (quickActions) {
+                        quickActions.innerHTML = `
+                            <div class="dashboard-card bg-white p-6 rounded-lg shadow-lg">
+                                <h3 class="text-lg font-semibold mb-4">Create New Chatbot</h3>
+                                <p class="text-gray-500 mb-4">Start building your first AI chatbot with our no-code builder</p>
+                                <a href="create-chatbot.html" class="block w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 text-center">
+                                    Get Started
+                                </a>
+                            </div>
+                            <div class="dashboard-card bg-white p-6 rounded-lg shadow-lg">
+                                <h3 class="text-lg font-semibold mb-4">Learn More</h3>
+                                <p class="text-gray-500 mb-4">Discover how to create and customize your chatbot</p>
+                                <a href="#" class="block w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 text-center">
+                                    View Tutorial
+                                </a>
+                            </div>
+                            <div class="dashboard-card bg-white p-6 rounded-lg shadow-lg">
+                                <h3 class="text-lg font-semibold mb-4">Templates</h3>
+                                <p class="text-gray-500 mb-4">Explore our pre-built chatbot templates</p>
+                                <a href="#" class="block w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 text-center">
+                                    Browse Templates
+                                </a>
+                            </div>
+                        `;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading chatbot data:', error);
+                alert('Error loading chatbot data. Please try again.');
+            }
         }
 
-        // Function to create activity element
-        function createActivityElement(activity) {
-            const div = document.createElement('div');
-            div.className = 'flex items-center space-x-4 p-4 bg-gray-50 rounded-lg';
-            
-            const icon = document.createElement('div');
-            icon.className = `text-${activity.iconColor}-600`;
-            icon.innerHTML = `<i class="fas ${activity.icon} text-2xl"></i>`;
-            
-            const content = document.createElement('div');
-            content.innerHTML = `
-                <p class="font-semibold">${activity.title}</p>
-                <p class="text-gray-500 text-sm">${activity.timeAgo}</p>
-            `;
-            
-            div.appendChild(icon);
-            div.appendChild(content);
-            return div;
+        // Add logout functionality
+        function logout() {
+            firebase.auth().signOut().then(() => {
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error('Error signing out:', error);
+            });
         }
     </script>
 </body>

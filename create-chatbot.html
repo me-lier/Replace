@@ -1093,7 +1093,7 @@
                     
                     // Show success message
                     alert('Chatbot created successfully!');
-                    window.location.href = 'chat.html';
+                    window.location.href = 'dashboard.html';
                 } catch (error) {
                     console.error('Error creating chatbot:', error);
                     alert('Error creating chatbot. Please try again.');
@@ -1141,36 +1141,29 @@
             firebase.initializeApp(firebaseConfig);
         }
 
-        // Function to ensure user is authenticated
-        async function ensureUserAuthenticated() {
-            const user = firebase.auth().currentUser;
-            if (user) {
-                return user;
+        // Check if user is logged in
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                // Redirect to login if not authenticated
+                window.location.href = 'login.html';
             }
-
-            // Create a temporary user for this session
-            try {
-                const email = `temp_${Date.now()}@temp.com`;
-                const password = `temp_${Date.now()}`;
-                const result = await firebase.auth().createUserWithEmailAndPassword(email, password);
-                return result.user;
-            } catch (error) {
-                console.error('Error signing in:', error);
-                throw error;
-            }
-        }
+        });
 
         // Function to save chatbot data
         async function saveChatbotData(data) {
             try {
-                // Ensure user is authenticated
-                const user = await ensureUserAuthenticated();
+                const user = firebase.auth().currentUser;
+                if (!user) {
+                    throw new Error('User not authenticated');
+                }
 
                 // Save to Firebase under user's UID
                 const chatbotRef = firebase.database().ref(`users/${user.uid}/chatbots`).push();
                 await chatbotRef.set({
                     ...data,
-                    createdAt: firebase.database.ServerValue.TIMESTAMP
+                    createdAt: firebase.database.ServerValue.TIMESTAMP,
+                    userId: user.uid,
+                    userEmail: user.email
                 });
 
                 return chatbotRef.key;
@@ -1203,8 +1196,8 @@
                 const chatbotId = await saveChatbotData(formData);
                 console.log('Chatbot created successfully with ID:', chatbotId);
 
-                // Redirect to success page
-                window.location.href = 'success.html';
+                // Redirect to dashboard
+                window.location.href = 'dashboard.html';
             } catch (error) {
                 console.error('Error creating chatbot:', error);
                 alert('Error creating chatbot. Please try again.');

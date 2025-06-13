@@ -122,6 +122,7 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script>
         // Firebase configuration
         const firebaseConfig = {
@@ -135,90 +136,128 @@
             measurementId: "G-7K6W5KETK2"
         };
 
-        // Initialize Firebase if not already initialized
+        // Initialize Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
 
-        // Wait for DOM to be loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            // Email/Password Login
-            const emailForm = document.getElementById('emailForm');
+        // Check if user is already logged in
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in, redirect to dashboard
+                window.location.href = 'dashboard.html';
+            }
+        });
+
+        // Handle login form submission
+        document.getElementById('emailForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
             const errorMessage = document.getElementById('errorMessage');
-
-            emailForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-
-                try {
-                    const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
-                    // Successful login
-                    window.location.href = 'dashboard.html'; // Redirect to dashboard
-                } catch (error) {
-                    errorMessage.textContent = error.message;
-                    errorMessage.classList.remove('hidden');
-                }
-            });
-
-            // Google Sign In
-            const googleSignIn = document.getElementById('googleSignIn');
-            googleSignIn.addEventListener('click', async () => {
-                try {
-                    const provider = new firebase.auth.GoogleAuthProvider();
-                    const result = await firebase.auth().signInWithPopup(provider);
-                    // Successful login
-                    window.location.href = 'dashboard.html'; // Redirect to dashboard
-                } catch (error) {
-                    errorMessage.textContent = error.message;
-                    errorMessage.classList.remove('hidden');
-                }
-            });
-
-            // Forgot Password
-            const forgotPassword = document.getElementById('forgotPassword');
-            forgotPassword.addEventListener('click', async (e) => {
-                e.preventDefault();
-                const email = document.getElementById('email').value;
+            
+            try {
+                // Sign in user
+                const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
                 
-                if (!email) {
-                    errorMessage.textContent = 'Please enter your email address';
-                    errorMessage.classList.remove('hidden');
-                    return;
-                }
+                // Store user info in localStorage
+                localStorage.setItem('userEmail', user.email);
+                localStorage.setItem('userId', user.uid);
+                
+                // Redirect to dashboard
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error('Login error:', error);
+                errorMessage.textContent = error.message;
+                errorMessage.classList.remove('hidden');
+            }
+        });
 
-                try {
-                    await firebase.auth().sendPasswordResetEmail(email);
-                    errorMessage.textContent = 'Password reset email sent!';
-                    errorMessage.classList.remove('hidden');
-                } catch (error) {
-                    errorMessage.textContent = error.message;
-                    errorMessage.classList.remove('hidden');
-                }
-            });
+        // Handle signup form submission
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const errorMessage = document.getElementById('signupErrorMessage');
+            
+            try {
+                // Create new user
+                const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Store user info in localStorage
+                localStorage.setItem('userEmail', user.email);
+                localStorage.setItem('userId', user.uid);
+                
+                // Redirect to dashboard
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error('Signup error:', error);
+                errorMessage.textContent = error.message;
+                errorMessage.classList.remove('hidden');
+            }
+        });
 
-            // Tab switching functionality
-            const emailTab = document.getElementById('emailTab');
-            const phoneTab = document.getElementById('phoneTab');
-            const phoneForm = document.getElementById('phoneForm');
+        // Google Sign In
+        const googleSignIn = document.getElementById('googleSignIn');
+        googleSignIn.addEventListener('click', async () => {
+            try {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                const result = await firebase.auth().signInWithPopup(provider);
+                // Successful login
+                window.location.href = 'dashboard.html'; // Redirect to dashboard
+            } catch (error) {
+                errorMessage.textContent = error.message;
+                errorMessage.classList.remove('hidden');
+            }
+        });
 
-            emailTab.addEventListener('click', () => {
-                emailTab.classList.add('text-indigo-600', 'border-b-2', 'border-indigo-600');
-                emailTab.classList.remove('text-gray-500');
-                phoneTab.classList.remove('text-indigo-600', 'border-b-2', 'border-indigo-600');
-                phoneTab.classList.add('text-gray-500');
-                emailForm.classList.remove('hidden');
-                phoneForm.classList.add('hidden');
-            });
+        // Forgot Password
+        const forgotPassword = document.getElementById('forgotPassword');
+        forgotPassword.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            
+            if (!email) {
+                errorMessage.textContent = 'Please enter your email address';
+                errorMessage.classList.remove('hidden');
+                return;
+            }
 
-            phoneTab.addEventListener('click', () => {
-                phoneTab.classList.add('text-indigo-600', 'border-b-2', 'border-indigo-600');
-                phoneTab.classList.remove('text-gray-500');
-                emailTab.classList.remove('text-indigo-600', 'border-b-2', 'border-indigo-600');
-                emailTab.classList.add('text-gray-500');
-                phoneForm.classList.remove('hidden');
-                emailForm.classList.add('hidden');
-            });
+            try {
+                await firebase.auth().sendPasswordResetEmail(email);
+                errorMessage.textContent = 'Password reset email sent!';
+                errorMessage.classList.remove('hidden');
+            } catch (error) {
+                errorMessage.textContent = error.message;
+                errorMessage.classList.remove('hidden');
+            }
+        });
+
+        // Tab switching functionality
+        const emailTab = document.getElementById('emailTab');
+        const phoneTab = document.getElementById('phoneTab');
+        const phoneForm = document.getElementById('phoneForm');
+
+        emailTab.addEventListener('click', () => {
+            emailTab.classList.add('text-indigo-600', 'border-b-2', 'border-indigo-600');
+            emailTab.classList.remove('text-gray-500');
+            phoneTab.classList.remove('text-indigo-600', 'border-b-2', 'border-indigo-600');
+            phoneTab.classList.add('text-gray-500');
+            emailForm.classList.remove('hidden');
+            phoneForm.classList.add('hidden');
+        });
+
+        phoneTab.addEventListener('click', () => {
+            phoneTab.classList.add('text-indigo-600', 'border-b-2', 'border-indigo-600');
+            phoneTab.classList.remove('text-gray-500');
+            emailTab.classList.remove('text-indigo-600', 'border-b-2', 'border-indigo-600');
+            emailTab.classList.add('text-gray-500');
+            phoneForm.classList.remove('hidden');
+            emailForm.classList.add('hidden');
         });
     </script>
 </body>
