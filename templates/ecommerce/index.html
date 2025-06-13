@@ -107,22 +107,42 @@
             }
         }
 
-        function sendMessage() {
+        async function sendMessage() {
             const userInput = document.getElementById('userInput');
             const message = userInput.value.trim();
-            
-            if (message) {
-                addMessage(message, true);
-                userInput.value = '';
+            const sendButton = document.querySelector('.send-btn');
+
+            if (!message) return;
+
+            addMessage(message, true);
+            userInput.value = '';
+
+            try {
+                // Show loading state
+                sendButton.disabled = true;
+                sendButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
                 
-                // Show typing indicator
-                showTypingIndicator();
+                const response = await fetch('/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ question: message })
+                });
                 
-                // Simulate AI response after a delay
-                setTimeout(() => {
-                    removeTypingIndicator();
-                    addMessage("I'm here to help with your shopping needs. How can I assist you today?");
-                }, 1500);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                addMessage(data.response);
+            } catch (error) {
+                console.error('Error:', error);
+                addMessage('I apologize, but I encountered an error. Please try again.');
+            } finally {
+                // Reset button state
+                sendButton.disabled = false;
+                sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
             }
         }
 
