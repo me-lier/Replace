@@ -6,6 +6,12 @@
     <title>Sign Up - Chat-Bot Generator</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Load Firebase config first -->
+    <script src="config.js"></script>
+    <!-- Then load Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <style>
         .gradient-bg {
             background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
@@ -138,15 +144,7 @@
     </div>
 
     <script type="module">
-        import { 
-            auth, 
-            createUserWithEmailAndPassword, 
-            signInWithPopup, 
-            googleProvider,
-            setupRecaptcha,
-            signInWithPhoneNumber,
-            updateProfile
-        } from './firebase-config.js';
+        import { auth, googleProvider, setupRecaptcha } from './firebase-config.js';
 
         // Email/Password Sign Up
         const emailForm = document.getElementById('emailForm');
@@ -176,12 +174,12 @@
 
             try {
                 console.log('Calling createUserWithEmailAndPassword...');
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
                 console.log('User created successfully:', userCredential.user);
                 
                 // Update user profile with full name
                 console.log('Updating user profile with full name...');
-                await updateProfile(userCredential.user, {
+                await userCredential.user.updateProfile({
                     displayName: fullName
                 });
                 console.log('Profile updated successfully');
@@ -200,7 +198,7 @@
         const googleSignUp = document.getElementById('googleSignUp');
         googleSignUp.addEventListener('click', async () => {
             try {
-                const result = await signInWithPopup(auth, googleProvider);
+                const result = await firebase.auth().signInWithPopup(googleProvider);
                 // Successful signup
                 window.location.href = 'dashboard.html'; // Redirect to dashboard
             } catch (error) {
@@ -233,7 +231,7 @@
                 const recaptchaVerifier = setupRecaptcha(phoneNumber);
                 
                 console.log('Sending OTP to:', phoneNumber);
-                confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifier);
+                confirmationResult = await firebase.auth().signInWithPhoneNumber(phoneNumber, recaptchaVerifier);
                 
                 // Show OTP input section
                 otpSection.classList.remove('hidden');
