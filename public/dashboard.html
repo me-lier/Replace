@@ -334,7 +334,7 @@
                                 <button onclick="downloadChatbot('${chatbot.id}', event)" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded">
                                     <i class="fas fa-download"></i> Download
                                 </button>
-                                <button onclick="deployChatbotToGitHubRender('${chatbot.id}', event)" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded ml-2">
+                                <button onclick="deployChatbotToGitHubRender('${chatbot.id}')" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded ml-2">
                                     <i class="fas fa-cloud-upload-alt"></i> Deploy
                                 </button>
                                 <button onclick="viewChatbot('${chatbot.id}')" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded">
@@ -604,35 +604,25 @@
         }
 
         // New function to deploy chatbot to GitHub/Render
-        async function deployChatbotToGitHubRender(chatbotId, event) {
+        async function deployChatbotToGitHubRender(chatbotId) {
             try {
+                // Get current user
                 const user = firebase.auth().currentUser;
                 if (!user) {
-                    alert('You must be logged in to deploy.');
-                    return;
+                    throw new Error('User not authenticated');
                 }
 
-                const button = event.target.closest('button');
-                const originalText = button.innerHTML;
-                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking GitHub authorization...';
-                button.disabled = true;
-
-                // Check if user has GitHub access token stored
+                // Check if GitHub token exists
                 const userSnapshot = await firebase.database().ref(`users/${user.uid}`).once('value');
                 const userData = userSnapshot.val();
-                const githubAccessToken = userData ? userData.githubAccessToken : null;
-
-                if (!githubAccessToken) {
-                    // If no token, redirect to GitHub OAuth login
-                    button.innerHTML = originalText;
-                    button.disabled = false;
-                    alert('Please authorize GitHub to deploy your chatbot.');
-                    window.location.href = `/api/github/login?state=${user.uid}`; // Pass userId as state
+                
+                if (!userData || !userData.githubAccessToken) {
+                    // Redirect to GitHub OAuth with userId
+                    window.location.href = `/api/github/login?userId=${user.uid}`;
                     return;
                 }
 
-                // If authorized, proceed with deployment (this part will be updated later for GitHub API calls)
-                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deploying...';
+                // If we have the token, proceed with deployment
                 const response = await fetch(`/api/deploy-chatbot/${chatbotId}`, {
                     method: 'POST',
                     headers: {
@@ -641,22 +631,20 @@
                     body: JSON.stringify({ userId: user.uid })
                 });
 
-                const result = await response.json();
-
+                const data = await response.json();
+                
                 if (!response.ok) {
-                    throw new Error(result.error || 'Deployment failed');
+                    throw new Error(data.error || 'Failed to deploy chatbot');
                 }
 
-                showNotification(result.message || 'Deployment initiated successfully!', 'success');
-
+                // Show success message with links
+                alert(`Deployment successful!\n\nGitHub Repository: ${data.repoUrl}\nRender Service: ${data.renderServiceUrl}`);
+                
+                // Optionally refresh the chatbot list
+                loadUserChatbots(user.uid);
             } catch (error) {
-                console.error('Error deploying chatbot:', error);
-                showNotification(error.message, 'error');
-            } finally {
-                // Reset button state
-                const button = event.target.closest('button');
-                button.innerHTML = originalText;
-                button.disabled = false;
+                console.error('Deployment error:', error);
+                alert('Failed to deploy chatbot: ' + error.message);
             }
         }
 

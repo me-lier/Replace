@@ -70,53 +70,68 @@ app.get('/api/test', (req, res) => {
     res.json({ message: 'Server is working!' });
 });
 
-// GitHub OAuth login initiation
+// GitHub OAuth login endpoint
 app.get('/api/github/login', (req, res) => {
-    const scopes = 'repo workflow'; // Permissions your app needs
-    res.redirect(`https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${GITHUB_REDIRECT_URI}&scope=${scopes}`);
+    const userId = req.query.userId; // Get userId from query parameter
+    if (!userId) {
+        return res.status(400).json({ error: 'User ID is required' });
+    }
+
+    // Store userId in state parameter
+    const state = Buffer.from(JSON.stringify({ userId })).toString('base64');
+    
+    // Define the scopes needed for GitHub API access
+    const scopes = 'repo,workflow';
+    
+    // Redirect to GitHub OAuth page
+    res.redirect(`https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${GITHUB_REDIRECT_URI}&scope=${scopes}&state=${state}`);
 });
 
-// GitHub OAuth callback handler
+// GitHub OAuth callback endpoint
 app.get('/api/github/callback', async (req, res) => {
-    const code = req.query.code;
-    const userId = req.query.state; // We'll pass userId as state to identify the user after callback
-
+    const { code, state } = req.query;
+    
     if (!code) {
-        console.error('No code received from GitHub');
-        return res.status(400).send('GitHub authorization failed: No code received.');
-    }
-    if (!userId) {
-        console.error('No userId received in OAuth state');
-        return res.status(400).send('GitHub authorization failed: User ID missing.');
+        return res.status(400).json({ error: 'Authorization code is required' });
     }
 
     try {
-        // Exchange code for an access token
-        const tokenResponse = await axios.post('https://github.com/login/oauth/access_token', {
+        // Decode state to get userId
+        const decodedState = JSON.parse(Buffer.from(state, 'base64').toString());
+        const userId = decodedState.userId;
+
+        if (!userId) {
+            return res.status(400).json({ error: 'User ID missing from state' });
+        }
+
+        // Exchange code for access token
+        const response = await axios.post('https://github.com/login/oauth/access_token', {
             client_id: GITHUB_CLIENT_ID,
             client_secret: GITHUB_CLIENT_SECRET,
             code: code,
-            redirect_uri: GITHUB_REDIRECT_URI,
+            redirect_uri: GITHUB_REDIRECT_URI
         }, {
-            headers: { Accept: 'application/json' }
+            headers: {
+                Accept: 'application/json'
+            }
         });
 
-        const accessToken = tokenResponse.data.access_token;
-
+        const accessToken = response.data.access_token;
+        
         if (!accessToken) {
-            console.error('No access token received from GitHub', tokenResponse.data);
-            return res.status(500).send('GitHub authorization failed: Could not retrieve access token.');
+            return res.status(400).json({ error: 'Failed to get access token' });
         }
 
-        // Save the access token to Firebase under the user's profile
-        await rtdb.ref(`users/${userId}/githubAccessToken`).set(accessToken);
+        // Save the access token to Firebase
+        await rtdb.ref(`users/${userId}`).update({
+            githubAccessToken: accessToken
+        });
 
-        // Redirect back to the dashboard or a success page
-        res.redirect('/dashboard.html?githubAuth=success');
-
+        // Redirect back to the dashboard
+        res.redirect('/dashboard.html');
     } catch (error) {
-        console.error('Error during GitHub OAuth callback:', error);
-        res.status(500).send('Error during GitHub authorization.');
+        console.error('GitHub OAuth error:', error);
+        res.status(500).json({ error: 'GitHub authorization failed: ' + error.message });
     }
 });
 
