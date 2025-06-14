@@ -716,6 +716,23 @@
         const uploadedFiles = document.getElementById('uploaded-files');
         const customTextInput = document.getElementById('custom-text-input');
 
+        // Define a mapping for template paths to template names
+        const templateMap = {
+            'templates/ecommerce/index.html': { name: 'E-commerce', displayName: 'E-commerce Assistant' },
+            'templates/professional/index.html': { name: 'Professional', displayName: 'Professional Business Bot' },
+            'templates/minimal/index.html': { name: 'Minimal', displayName: 'Minimalist Chatbot' },
+            'templates/healthcare/index.html': { name: 'Healthcare', displayName: 'Healthcare Assistant' },
+            'templates/education/index.html': { name: 'Education', displayName: 'Education Guide' },
+            'templates/travel/index.html': { name: 'Travel', displayName: 'Travel Planner' },
+            'templates/finance/index.html': { name: 'Finance', displayName: 'Financial Advisor' },
+            'templates/realestate/index.html': { name: 'Realestate', displayName: 'Real Estate Agent' },
+            'templates/food/index.html': { name: 'Food', displayName: 'Food & Recipe Bot' },
+            'templates/fitness/index.html': { name: 'Fitness', displayName: 'Fitness Coach' },
+            'templates/tech/index.html': { name: 'Tech', displayName: 'Tech Support Assistant' },
+            'templates/legal/index.html': { name: 'Legal', displayName: 'Legal Assistant' },
+            'templates/creative/index.html': { name: 'Creative', displayName: 'Creative Studio Bot' }
+        };
+
         // Initially disable the Next buttons
         nextToTemplate.disabled = true;
         nextToTemplate.classList.add('opacity-50', 'cursor-not-allowed');
@@ -1110,10 +1127,16 @@
                 const selectedPurpose = document.querySelector('.purpose-card.selected');
                 const purpose = selectedPurpose ? selectedPurpose.getAttribute('data-purpose') : null;
 
-                // Get selected template
-                const selectedTemplate = document.querySelector('.template-card.selected');
-                const template = selectedTemplate ? selectedTemplate.getAttribute('data-template') : null;
-                const templateName = selectedTemplate ? selectedTemplate.querySelector('h3').textContent : null;
+                // Get selected template from localStorage and map to name and display name
+                const storedTemplatePath = localStorage.getItem('selectedTemplate');
+                let template = null;
+                let templateName = null;
+                if (storedTemplatePath && templateMap[storedTemplatePath]) {
+                    template = templateMap[storedTemplatePath].name;
+                    templateName = templateMap[storedTemplatePath].displayName;
+                }
+                console.log('Debug: Derived template', template);
+                console.log('Debug: Derived templateName', templateName);
 
                 // Get selected model and provider
                 const selectedModel = document.querySelector('.model-option.selected');
