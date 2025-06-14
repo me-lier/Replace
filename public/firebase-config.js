@@ -9,20 +9,26 @@ import {
     sendPasswordResetEmail,
     signOut,
     RecaptchaVerifier,
-    signInWithPhoneNumber
+    signInWithPhoneNumber,
+    updateProfile
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { firebaseConfig } from './config.js';
+
+// Get firebaseConfig from global window object
+const firebaseConfig = window.firebaseConfig;
 
 console.log('Initializing Firebase with config:', firebaseConfig);
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+const auth = firebase.auth();
+const googleProvider = new firebase.auth.GoogleAuthProvider();
 
 // Initialize reCAPTCHA verifier
 const setupRecaptcha = (phoneNumber) => {
-    const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+    const recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
         'size': 'normal',
         'callback': (response) => {
             // reCAPTCHA solved, allow signInWithPhoneNumber.
@@ -44,7 +50,8 @@ export {
     sendPasswordResetEmail,
     signOut,
     setupRecaptcha,
-    signInWithPhoneNumber
+    signInWithPhoneNumber,
+    updateProfile
 };
 
 // Function to save chatbot data
