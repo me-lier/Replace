@@ -281,4 +281,40 @@ app.post('/api/deploy-chatbot/:chatbotId', async (req, res) => {
         const packageJsonContent = JSON.stringify({
             name: repoName,
             version: '1.0.0',
-            description: `
+            description: `A chatbot generated from ${chatbotData.templateName} template.`,
+            main: 'server.js',
+            scripts: {
+                start: 'node server.js'
+            },
+            dependencies: {
+                express: '^4.18.2',
+                'firebase-admin': '^12.0.0',
+                axios: '^1.6.0',
+                '@octokit/rest': '^20.0.2'
+            }
+        }, null, 2);
+        await fs.writeFile(path.join(appRootDir, 'package.json'), packageJsonContent);
+
+        // Create a zip file
+        const archive = archiver('zip', {
+            zlib: { level: 9 } // Maximum compression
+        });
+
+        // Set response headers
+        res.attachment(`chatbot-${chatbotId}.zip`);
+        archive.pipe(res);
+
+        // Add files to zip
+        archive.directory(tempDir, false);
+
+        // Finalize the archive
+        await archive.finalize();
+
+        // Clean up temporary directory
+        await fs.rm(tempDir, { recursive: true, force: true });
+
+    } catch (error) {
+        console.error('Error creating chatbot files:', error);
+        res.status(500).json({ error: 'Failed to create chatbot files' });
+    }
+});
