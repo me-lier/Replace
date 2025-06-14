@@ -224,28 +224,34 @@
                         Render API Key
                     </label>
                     <input type="password" id="editRenderApiKey" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="rk_...">
-                    <div class="mt-2 space-y-2">
-                        <p class="text-sm text-gray-600">
-                            <strong>How to get your Render API Key:</strong>
-                            <ol class="list-decimal list-inside mt-1 ml-2">
-                                <li>Go to <a href="https://dashboard.render.com/account/api-keys" target="_blank" class="text-blue-600 hover:underline font-medium">Render API Keys Page</a></li>
-                                <li>Click "New API Key"</li>
-                                <li>Give it a name (e.g., "Chatbot Deployer")</li>
-                                <li>Copy the generated key (it starts with "rk_")</li>
-                                <li>Paste it here</li>
-                            </ol>
-                        </p>
-                        <p class="text-sm text-gray-600">
-                            <strong>How to find your Render Owner ID:</strong>
-                            <ol class="list-decimal list-inside mt-1 ml-2">
-                                <li>Go to <a href="https://dashboard.render.com" target="_blank" class="text-blue-600 hover:underline">Render Dashboard</a></li>
-                                <li>Click your profile picture in the top right</li>
-                                <li>Select "Account Settings"</li>
-                                <li>Your Owner ID will be in the URL: <code class="bg-gray-100 px-1 rounded">https://dashboard.render.com/account/usr-xxxxx</code></li>
-                                <li>Copy the <code class="bg-gray-100 px-1 rounded">usr-xxxxx</code> part</li>
-                            </ol>
-                        </p>
-                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="editRenderOwnerId">
+                        Render Owner ID
+                    </label>
+                    <input type="text" id="editRenderOwnerId" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="usr-xxxxx">
+                </div>
+                <div class="mt-2 space-y-2">
+                    <p class="text-sm text-gray-600">
+                        <strong>How to get your Render API Key:</strong>
+                        <ol class="list-decimal list-inside mt-1 ml-2">
+                            <li>Go to <a href="https://dashboard.render.com/account/api-keys" target="_blank" class="text-blue-600 hover:underline font-medium">Render API Keys Page</a></li>
+                            <li>Click "New API Key"</li>
+                            <li>Give it a name (e.g., "Chatbot Deployer")</li>
+                            <li>Copy the generated key (it starts with "rk_")</li>
+                            <li>Paste it here</li>
+                        </ol>
+                    </p>
+                    <p class="text-sm text-gray-600">
+                        <strong>How to find your Render Owner ID:</strong>
+                        <ol class="list-decimal list-inside mt-1 ml-2">
+                            <li>Go to <a href="https://dashboard.render.com" target="_blank" class="text-blue-600 hover:underline">Render Dashboard</a></li>
+                            <li>Click your profile picture in the top right</li>
+                            <li>Select "Account Settings"</li>
+                            <li>Your Owner ID will be in the URL: <code class="bg-gray-100 px-1 rounded">https://dashboard.render.com/account/usr-xxxxx</code></li>
+                            <li>Copy the <code class="bg-gray-100 px-1 rounded">usr-xxxxx</code> part</li>
+                        </ol>
+                    </p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Document Type</label>
@@ -443,62 +449,68 @@
 
         // Function to show edit modal
         async function editChatbot(chatbotId) {
-            currentEditingChatbotId = chatbotId;
-            const user = firebase.auth().currentUser;
-            if (!user) return;
-
             try {
+                const user = firebase.auth().currentUser;
+                if (!user) {
+                    showNotification('You must be logged in to edit chatbots.', 'error');
+                    return;
+                }
+
                 const snapshot = await firebase.database().ref(`users/${user.uid}/chatbots/${chatbotId}`).once('value');
                 const chatbot = snapshot.val();
-                
-                if (chatbot) {
-                    // Fill form with existing data
-                    document.getElementById('editPurpose').value = chatbot.purpose || '';
-                    document.getElementById('editTemplate').value = chatbot.template || '';
-                    
-                    // Set API Provider and populate models
-                    editApiProvider.value = chatbot.apiProvider || '';
-                    populateEditModels(chatbot.apiProvider, chatbot.model);
 
-                    document.getElementById('editApiKey').value = chatbot.apiKey || '';
-                    document.getElementById('editRenderApiKey').value = chatbot.renderApiKey || '';
-                    document.getElementById('editDocumentType').value = chatbot.documentType || 'custom';
-                    
-                    // Handle document type specific fields
-                    if (chatbot.documentType === 'custom') {
-                        document.getElementById('editCustomTextContainer').classList.remove('hidden');
-                        document.getElementById('editFilesContainer').classList.add('hidden');
-                        document.getElementById('editCustomText').value = chatbot.documentContent || '';
-                    } else {
-                        document.getElementById('editCustomTextContainer').classList.add('hidden');
-                        document.getElementById('editFilesContainer').classList.remove('hidden');
-                        const filesContainer = document.getElementById('editUploadedFiles');
-                        filesContainer.innerHTML = '';
-                        if (chatbot.files && chatbot.files.length > 0) {
-                            chatbot.files.forEach(file => {
-                                const fileItem = document.createElement('div');
-                                fileItem.className = 'flex items-center justify-between p-2 bg-gray-50 rounded-md';
-                                fileItem.innerHTML = `
-                                    <div class="flex items-center">
-                                        <i class="fas fa-file text-gray-400 mr-2"></i>
-                                        <span class="text-sm text-gray-700">${file.name}</span>
-                                    </div>
-                                    <button type="button" class="text-red-500 hover:text-red-700" onclick="this.parentElement.remove()">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                `;
-                                filesContainer.appendChild(fileItem);
-                            });
-                        }
-                    }
-
-                    // Show modal
-                    document.getElementById('editModal').classList.remove('hidden');
-                    document.getElementById('editModal').classList.add('flex');
+                if (!chatbot) {
+                    showNotification('Chatbot not found.', 'error');
+                    return;
                 }
+
+                // Populate the edit form
+                document.getElementById('editChatbotId').value = chatbotId;
+                document.getElementById('editPurpose').value = chatbot.purpose || '';
+                document.getElementById('editApiKey').value = chatbot.apiKey || '';
+                document.getElementById('editRenderApiKey').value = chatbot.renderApiKey || '';
+                document.getElementById('editRenderOwnerId').value = chatbot.renderOwnerId || '';
+                
+                // Set API Provider and populate models
+                editApiProvider.value = chatbot.apiProvider || '';
+                populateEditModels(chatbot.apiProvider, chatbot.model);
+
+                document.getElementById('editDocumentType').value = chatbot.documentType || 'custom';
+                
+                // Handle document type specific fields
+                if (chatbot.documentType === 'custom') {
+                    document.getElementById('editCustomTextContainer').classList.remove('hidden');
+                    document.getElementById('editFilesContainer').classList.add('hidden');
+                    document.getElementById('editCustomText').value = chatbot.documentContent || '';
+                } else {
+                    document.getElementById('editCustomTextContainer').classList.add('hidden');
+                    document.getElementById('editFilesContainer').classList.remove('hidden');
+                    const filesContainer = document.getElementById('editUploadedFiles');
+                    filesContainer.innerHTML = '';
+                    if (chatbot.files && chatbot.files.length > 0) {
+                        chatbot.files.forEach(file => {
+                            const fileItem = document.createElement('div');
+                            fileItem.className = 'flex items-center justify-between p-2 bg-gray-50 rounded-md';
+                            fileItem.innerHTML = `
+                                <div class="flex items-center">
+                                    <i class="fas fa-file text-gray-400 mr-2"></i>
+                                    <span class="text-sm text-gray-700">${file.name}</span>
+                                </div>
+                                <button type="button" class="text-red-500 hover:text-red-700" onclick="this.parentElement.remove()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            `;
+                            filesContainer.appendChild(fileItem);
+                        });
+                    }
+                }
+
+                // Show modal
+                document.getElementById('editModal').classList.remove('hidden');
+                document.getElementById('editModal').classList.add('flex');
             } catch (error) {
-                console.error('Error loading chatbot data:', error);
-                alert('Error loading chatbot data. Please try again.');
+                console.error('Error editing chatbot:', error);
+                showNotification('Failed to edit chatbot: ' + error.message, 'error');
             }
         }
 
@@ -524,12 +536,14 @@
         document.getElementById('editChatbotForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            if (!currentEditingChatbotId) return;
-
-            const user = firebase.auth().currentUser;
-            if (!user) return;
-
             try {
+                const user = firebase.auth().currentUser;
+                if (!user) {
+                    showNotification('You must be logged in to save chatbots.', 'error');
+                    return;
+                }
+
+                const chatbotId = document.getElementById('editChatbotId').value;
                 const selectedApiProvider = editApiProvider.value;
                 const selectedModelValue = editModel.value;
 
@@ -547,6 +561,7 @@
                     modelDetails: modelDetails,
                     apiKey: document.getElementById('editApiKey').value,
                     renderApiKey: document.getElementById('editRenderApiKey').value,
+                    renderOwnerId: document.getElementById('editRenderOwnerId').value,
                     documentType: document.getElementById('editDocumentType').value,
                     documentContent: document.getElementById('editDocumentType').value === 'custom' 
                         ? document.getElementById('editCustomText').value 
@@ -556,18 +571,18 @@
                         type: 'file',
                         size: '0'
                     })),
-                    lastUpdated: firebase.database.ServerValue.TIMESTAMP,
+                    updatedAt: new Date().toISOString(),
                     version: '1.0' // Assuming version remains 1.0 on update, or you can retrieve and increment
                 };
 
-                await firebase.database().ref(`users/${user.uid}/chatbots/${currentEditingChatbotId}`).update(formData);
+                await firebase.database().ref(`users/${user.uid}/chatbots/${chatbotId}`).update(formData);
                 
                 alert('Chatbot updated successfully!');
                 closeEditModal();
                 loadUserChatbots(user.uid); // Reload the dashboard
             } catch (error) {
-                console.error('Error updating chatbot:', error);
-                alert('Error updating chatbot. Please try again.');
+                console.error('Error saving chatbot:', error);
+                showNotification('Failed to save chatbot: ' + error.message, 'error');
             }
         });
 
@@ -715,6 +730,7 @@
                             <p class="mb-2"><strong class="text-gray-700">Model:</strong> ${chatbot.modelDetails ? chatbot.modelDetails.name : 'N/A'}</p>
                             <p class="mb-2"><strong class="text-gray-700">API Key:</strong> ${chatbot.apiKey}</p>
                             <p class="mb-2"><strong class="text-gray-700">Render API Key:</strong> ${chatbot.renderApiKey || 'N/A'}</p>
+                            <p class="mb-2"><strong class="text-gray-700">Render Owner ID:</strong> ${chatbot.renderOwnerId || 'N/A'}</p>
                             <p class="mb-2"><strong class="text-gray-700">Document Type:</strong> ${chatbot.documentType}</p>
                             <p class="mb-2"><strong class="text-gray-700">Document Content:</strong></p>
                             <pre class="bg-gray-100 p-3 rounded-md text-sm text-gray-700 whitespace-pre-wrap break-words mb-4">${chatbot.documentContent || 'No content available'}</pre>
