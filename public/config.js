@@ -10,4 +10,5 @@ const firebaseConfig = {
     measurementId: "G-7K6W5KETK2"
 };
 
-export { firebaseConfig };
+// Make firebaseConfig available globally
+window.firebaseConfig = firebaseConfig;
