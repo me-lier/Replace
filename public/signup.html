@@ -144,7 +144,8 @@
             signInWithPopup, 
             googleProvider,
             setupRecaptcha,
-            signInWithPhoneNumber
+            signInWithPhoneNumber,
+            updateProfile
         } from './firebase-config.js';
 
         // Email/Password Sign Up
@@ -180,13 +181,14 @@
                 
                 // Update user profile with full name
                 console.log('Updating user profile with full name...');
-                await userCredential.user.updateProfile({
+                await updateProfile(userCredential.user, {
                     displayName: fullName
                 });
                 console.log('Profile updated successfully');
                 
-                // Successful signup
-                window.location.href = 'dashboard.html'; // Redirect to dashboard
+                // Show success message and redirect to login
+                alert('Account created successfully! Please login to continue.');
+                window.location.href = 'login.html';
             } catch (error) {
                 console.error('Error during signup:', error);
                 errorMessage.textContent = error.message;
