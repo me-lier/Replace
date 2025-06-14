@@ -318,3 +318,18 @@ app.post('/api/deploy-chatbot/:chatbotId', async (req, res) => {
         res.status(500).json({ error: 'Failed to create chatbot files' });
     }
 });
+
+// Serve the main application
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT}`);
+    console.log('Available endpoints:');
+    console.log('- GET /api/test');
+    console.log('- GET /api/download-chatbot/:chatbotId');
+});
+
+// INSTRUCTIONS: Place your serviceAccountKey.json file (downloaded from Firebase Console > Project Settings > Service Accounts) in the project root.
