@@ -718,19 +718,19 @@
 
         // Define a mapping for template paths to template names
         const templateMap = {
-            'templates/ecommerce/index.html': { name: 'E-commerce', displayName: 'E-commerce Assistant' },
-            'templates/professional/index.html': { name: 'Professional', displayName: 'Professional Business Bot' },
-            'templates/minimal/index.html': { name: 'Minimal', displayName: 'Minimalist Chatbot' },
-            'templates/healthcare/index.html': { name: 'Healthcare', displayName: 'Healthcare Assistant' },
-            'templates/education/index.html': { name: 'Education', displayName: 'Education Guide' },
-            'templates/travel/index.html': { name: 'Travel', displayName: 'Travel Planner' },
-            'templates/finance/index.html': { name: 'Finance', displayName: 'Financial Advisor' },
-            'templates/realestate/index.html': { name: 'Realestate', displayName: 'Real Estate Agent' },
-            'templates/food/index.html': { name: 'Food', displayName: 'Food & Recipe Bot' },
-            'templates/fitness/index.html': { name: 'Fitness', displayName: 'Fitness Coach' },
-            'templates/tech/index.html': { name: 'Tech', displayName: 'Tech Support Assistant' },
-            'templates/legal/index.html': { name: 'Legal', displayName: 'Legal Assistant' },
-            'templates/creative/index.html': { name: 'Creative', displayName: 'Creative Studio Bot' }
+            'templates/ecommerce/index.html': { name: 'ecommerce', displayName: 'E-commerce Assistant' },
+            'templates/professional/index.html': { name: 'professional', displayName: 'Professional Business Bot' },
+            'templates/minimal/index.html': { name: 'minimal', displayName: 'Minimalist Chatbot' },
+            'templates/healthcare/index.html': { name: 'healthcare', displayName: 'Healthcare Assistant' },
+            'templates/education/index.html': { name: 'education', displayName: 'Education Guide' },
+            'templates/travel/index.html': { name: 'travel', displayName: 'Travel Planner' },
+            'templates/finance/index.html': { name: 'finance', displayName: 'Financial Advisor' },
+            'templates/realestate/index.html': { name: 'realestate', displayName: 'Real Estate Agent' },
+            'templates/food/index.html': { name: 'food', displayName: 'Food & Recipe Bot' },
+            'templates/fitness/index.html': { name: 'fitness', displayName: 'Fitness Coach' },
+            'templates/tech/index.html': { name: 'tech', displayName: 'Tech Support Assistant' },
+            'templates/legal/index.html': { name: 'legal', displayName: 'Legal Assistant' },
+            'templates/creative/index.html': { name: 'creative', displayName: 'Creative Studio Bot' }
         };
 
         // Initially disable the Next buttons
@@ -1132,8 +1132,8 @@
                 let template = null;
                 let templateName = null;
                 if (storedTemplatePath && templateMap[storedTemplatePath]) {
-                    template = templateMap[storedTemplatePath].name;
-                    templateName = templateMap[storedTemplatePath].displayName;
+                    template = templateMap[storedTemplatePath].name; // Storing lowercase for consistency with file paths and dropdown values
+                    templateName = templateMap[storedTemplatePath].displayName; // Storing display name as is
                 }
                 console.log('Debug: Derived template', template);
                 console.log('Debug: Derived templateName', templateName);
