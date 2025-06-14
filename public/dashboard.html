@@ -220,6 +220,10 @@
                     <input type="password" id="editApiKey" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                 </div>
                 <div>
+                    <label class="block text-sm font-medium text-gray-700">Render API Key (Optional)</label>
+                    <input type="password" id="editRenderApiKey" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="rk_...">
+                </div>
+                <div>
                     <label class="block text-sm font-medium text-gray-700">Document Type</label>
                     <select id="editDocumentType" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         <option value="custom">Custom Text</option>
@@ -330,6 +334,9 @@
                                 <button onclick="downloadChatbot('${chatbot.id}', event)" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded">
                                     <i class="fas fa-download"></i> Download
                                 </button>
+                                <button onclick="deployChatbotToGitHubRender('${chatbot.id}', event)" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded ml-2">
+                                    <i class="fas fa-cloud-upload-alt"></i> Deploy
+                                </button>
                                 <button onclick="viewChatbot('${chatbot.id}')" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded">
                                     <i class="fas fa-eye"></i> View
                                 </button>
@@ -430,6 +437,7 @@
                     populateEditModels(chatbot.apiProvider, chatbot.model);
 
                     document.getElementById('editApiKey').value = chatbot.apiKey || '';
+                    document.getElementById('editRenderApiKey').value = chatbot.renderApiKey || '';
                     document.getElementById('editDocumentType').value = chatbot.documentType || 'custom';
                     
                     // Handle document type specific fields
@@ -514,6 +522,7 @@
                     model: selectedModelValue,
                     modelDetails: modelDetails,
                     apiKey: document.getElementById('editApiKey').value,
+                    renderApiKey: document.getElementById('editRenderApiKey').value,
                     documentType: document.getElementById('editDocumentType').value,
                     documentContent: document.getElementById('editDocumentType').value === 'custom' 
                         ? document.getElementById('editCustomText').value 
@@ -594,6 +603,63 @@
             }
         }
 
+        // New function to deploy chatbot to GitHub/Render
+        async function deployChatbotToGitHubRender(chatbotId, event) {
+            try {
+                const user = firebase.auth().currentUser;
+                if (!user) {
+                    alert('You must be logged in to deploy.');
+                    return;
+                }
+
+                const button = event.target.closest('button');
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking GitHub authorization...';
+                button.disabled = true;
+
+                // Check if user has GitHub access token stored
+                const userSnapshot = await firebase.database().ref(`users/${user.uid}`).once('value');
+                const userData = userSnapshot.val();
+                const githubAccessToken = userData ? userData.githubAccessToken : null;
+
+                if (!githubAccessToken) {
+                    // If no token, redirect to GitHub OAuth login
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                    alert('Please authorize GitHub to deploy your chatbot.');
+                    window.location.href = `/api/github/login?state=${user.uid}`; // Pass userId as state
+                    return;
+                }
+
+                // If authorized, proceed with deployment (this part will be updated later for GitHub API calls)
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deploying...';
+                const response = await fetch(`/api/deploy-chatbot/${chatbotId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userId: user.uid })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Deployment failed');
+                }
+
+                showNotification(result.message || 'Deployment initiated successfully!', 'success');
+
+            } catch (error) {
+                console.error('Error deploying chatbot:', error);
+                showNotification(error.message, 'error');
+            } finally {
+                // Reset button state
+                const button = event.target.closest('button');
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+
         // Function to show notifications
         function showNotification(message, type = 'success') {
             const notification = document.createElement('div');
@@ -636,6 +702,7 @@
                             <p class="mb-2"><strong class="text-gray-700">API Provider:</strong> ${chatbot.modelDetails ? chatbot.modelDetails.provider : 'N/A'}</p>
                             <p class="mb-2"><strong class="text-gray-700">Model:</strong> ${chatbot.modelDetails ? chatbot.modelDetails.name : 'N/A'}</p>
                             <p class="mb-2"><strong class="text-gray-700">API Key:</strong> ${chatbot.apiKey}</p>
+                            <p class="mb-2"><strong class="text-gray-700">Render API Key:</strong> ${chatbot.renderApiKey || 'N/A'}</p>
                             <p class="mb-2"><strong class="text-gray-700">Document Type:</strong> ${chatbot.documentType}</p>
                             <p class="mb-2"><strong class="text-gray-700">Document Content:</strong></p>
                             <pre class="bg-gray-100 p-3 rounded-md text-sm text-gray-700 whitespace-pre-wrap break-words mb-4">${chatbot.documentContent || 'No content available'}</pre>
