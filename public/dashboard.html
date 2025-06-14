@@ -219,9 +219,24 @@
                     <label class="block text-sm font-medium text-gray-700">API Key</label>
                     <input type="password" id="editApiKey" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Render API Key (Optional)</label>
-                    <input type="password" id="editRenderApiKey" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="rk_...">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="editRenderApiKey">
+                        Render API Key
+                    </label>
+                    <input type="password" id="editRenderApiKey" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <p class="text-sm text-gray-600 mt-1">
+                        Get your Render API Key from <a href="https://dashboard.render.com/account/api-keys" target="_blank" class="text-blue-600 hover:underline">Render Dashboard > Account > API Keys</a>
+                    </p>
+                    <p class="text-sm text-gray-600 mt-1">
+                        To find your Render Owner ID:
+                        <ol class="list-decimal list-inside mt-1 ml-2">
+                            <li>Go to <a href="https://dashboard.render.com" target="_blank" class="text-blue-600 hover:underline">Render Dashboard</a></li>
+                            <li>Click on your profile picture in the top right</li>
+                            <li>Select "Account Settings"</li>
+                            <li>Your Owner ID will be in the URL: <code class="bg-gray-100 px-1 rounded">https://dashboard.render.com/account/usr-xxxxx</code></li>
+                            <li>Copy the <code class="bg-gray-100 px-1 rounded">usr-xxxxx</code> part</li>
+                        </ol>
+                    </p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Document Type</label>
